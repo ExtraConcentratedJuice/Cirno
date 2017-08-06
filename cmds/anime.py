@@ -12,7 +12,7 @@ import yaml
 import bleach
 #hehe xD le api wrapper
 import spice_api as spice
-from pybooru import Danbooru, Moebooru
+from pybooru import Danbooru, Moebooru, PybooruHTTPError
 
 
 
@@ -33,11 +33,11 @@ class anime():
     @commands.cooldown(5, 6, type=commands.BucketType.channel)
     async def animeimg(self, ctx, *, imgtag):
         """Gives you an anime image."""
-        
-        imagelist = self.danbooru.post_list(tags=(imgtag + ' rating:safe'), limit=5, random=True)
 
-        if ' ' in imgtag:
-            await self.bot.say('You are only allowed to search for 1 tag, due to Danbooru\'s limitations. Remember that an underscore (``_``) represents a space in character names.')
+        try:
+            imagelist = self.danbooru.post_list(tags=(imgtag + ' rating:safe'), limit=5, random=True)
+        except PybooruHTTPError:
+            await self.bot.say('Danbooru has a limitation on tags. Please use only one tag.')
             return
         
         if len(imagelist) == 0:
@@ -61,12 +61,12 @@ class anime():
         if 'nsfw' not in ctx.message.channel.name:
             await self.bot.say('You must be in a channel with ``nsfw`` in it\'s name to use this command.')
             return
-
-        if ' ' in imgtag:
-            await self.bot.say('You are only allowed to search for 1 tag, due to Danbooru\'s limitations. Remember that an underscore (``_``) represents a space in character names.')
-            return
         
-        imagelist = self.danbooru.post_list(tags=(imgtag + ' rating:explicit'), limit=5, random=True)
+        try:
+            imagelist = self.danbooru.post_list(tags=(imgtag + ' rating:explicit'), limit=5, random=True)
+        except PybooruHTTPError:
+            await self.bot.say('Danbooru has a limitation on tags. Please use only one tag.')
+            return
         
         if len(imagelist) == 0:
             await self.bot.say('No images were found for ``{}``. Try another tag.'.format(imgtag))
@@ -87,11 +87,13 @@ class anime():
         
         count = 0
         await self.bot.add_reaction(ctx.message, '\U0001F44C')
-        if ' ' in imgtag:
-            await self.bot.say('You are only allowed to search for 1 tag, due to Danbooru\'s limitations. Remember that an underscore (``_``) represents a space in character names.')
-            return
+
         while count < random.randint(4,8):
-            images = self.danbooru.post_list(tags=imgtag + ' rating:explicit', limit=10, random=True, page=random.randint(1,11))
+            try:
+                images = self.danbooru.post_list(tags=imgtag + ' rating:explicit', limit=10, random=True, page=random.randint(1,11))
+            except PybooruHTTPError:
+                await self.bot.say('Danbooru has a limitation on tags. Please use only one tag.')
+                return
                 
             if len(images) == 0:
                 images = self.danbooru.post_list(tags=imgtag + ' rating:explicit', limit=9, random=True, page=1)
