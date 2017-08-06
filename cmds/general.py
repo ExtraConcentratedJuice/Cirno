@@ -13,7 +13,7 @@ import asyncio
 from collections import Counter
     
 class general():
-	def __init__(self, bot):
+    def __init__(self, bot):
         self.bot = bot
         self.bot.remove_command('help')
 
