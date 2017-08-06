@@ -36,6 +36,7 @@ class general():
                     .add_field(name = "``!coin``", value = 'Flips a coin, complete with image of a coin.', inline = False) \
                     .add_field(name = "``!kms``", value = 'Six different ways to express your loss of the will to live.', inline = False) \
                     .add_field(name = "``!roboinfo``", value = 'Gives you some information regarding this bot.', inline = False) \
+                    .add_field(name = "``!gibsauce``", value = 'Gives you Robo-Fuhrer\'s mess of a source code.', inline = False) \
                     .add_field(name ='__**Game Stuff**__', value = 'Stuff related to gaem\n', inline = False) \
                     .add_field(name = "``!stats (SteamID64 or Vanity URL)``", value = 'Gives you Unturned stats.', inline = False) \
                     .add_field(name = "``!steamid (Vanity URL)``", value = 'Converts a Vanity URL to SteamID64.', inline = False) \
@@ -166,6 +167,10 @@ class general():
         catlink = (cat['file'])
         embed = discord.Embed(title='A cat from that shitty cat API').set_image(url=catlink)
         await self.bot.say(embed=embed)
+
+    @commands.command(pass_context=True)
+    async def gibsauce(self, ctx):
+        await self.bot.say('https://github.com/ExtraConcentratedJuice/robo-fuhrer')
         
 
 def setup(bot):
