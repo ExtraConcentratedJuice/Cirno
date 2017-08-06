@@ -144,7 +144,7 @@ class general():
     @commands.command(pass_context=True)
     async def russianroulette(self, ctx):
         """Russian Roulette."""
-        bullet = random.randint(1,6)
+        bullet = random.randint(1, 6)
         await self.bot.say(':gun: The chambers have been spun.')
         await asyncio.sleep(1.5)
         pulltrig = 'You pull the trigger, and...\n'
@@ -161,8 +161,8 @@ class general():
 
     @commands.command(pass_context=True)
     async def cat(self, ctx):
-        with requests.get('http://random.cat/meow') as kitty:
-            cat = json.loads(kitty.read().decode())
+        kitty = requests.get('http://random.cat/meow')
+        cat = kitty.json()
         catlink = (cat['file'])
         embed = discord.Embed(title='A cat from that shitty cat API').set_image(url=catlink)
         await self.bot.say(embed=embed)
