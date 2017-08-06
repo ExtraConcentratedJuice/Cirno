@@ -158,6 +158,14 @@ class general():
         """Gas chamber meme"""
         gasjews = ['http://i.magaimg.net/img/qsx.png', 'http://i.magaimg.net/img/q13.gif', 'http://i.magaimg.net/img/q14.png', 'http://i.magaimg.net/img/q5c.jpg']
         self.bot.say(random.choice(gasjews))
+
+    @commands.command(pass_context=True)
+    async def cat(self, ctx):
+        with requests.get('http://random.cat/meow') as kitty:
+            cat = json.loads(kitty.read().decode())
+        catlink = (cat['file'])
+        embed = discord.Embed(title='A cat from that shitty cat API').set_image(url=catlink)
+        await self.bot.say(embed=embed)
         
 
 def setup(bot):
