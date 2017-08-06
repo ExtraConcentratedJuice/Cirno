@@ -13,7 +13,7 @@ import asyncio
 from collections import Counter
     
 class general():
-    def __init__(self, bot):
+	def __init__(self, bot):
         self.bot = bot
         self.bot.remove_command('help')
 
@@ -161,8 +161,8 @@ class general():
 
     @commands.command(pass_context=True)
     async def cat(self, ctx):
-        with requests.get('http://random.cat/meow') as kitty:
-            cat = json.loads(kitty.read().decode())
+        kitty = requests.get('http://random.cat/meow')
+        cat = kitty.json()
         catlink = (cat['file'])
         embed = discord.Embed(title='A cat from that shitty cat API').set_image(url=catlink)
         await self.bot.say(embed=embed)
