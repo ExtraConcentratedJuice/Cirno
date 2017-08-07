@@ -43,12 +43,9 @@ class anime():
         if len(imagelist) == 0:
             await self.bot.say('No images were found for ``{}``. Try another tag.'.format(imgtag))
             return
-            
-        for img in imagelist:
-            animeimg = ("http://danbooru.donmai.us{}".format(img['file_url']))
-            #This adds an extra layer of randomization to the image. It stops on a random image in the list.
-            if (random.random() * 100) > 75:
-                break
+
+        img = random.choice(imagelist)
+        animeimg = ("http://danbooru.donmai.us{}".format(img['file_url']))
             
         embed = discord.Embed(title='tag: '+imgtag).set_image(url=animeimg)
         await self.bot.say(embed=embed)
@@ -72,10 +69,8 @@ class anime():
             await self.bot.say('No images were found for ``{}``. Try another tag.'.format(imgtag))
             return
             
-        for img in imagelist:
-            hentaiimg = ("http://danbooru.donmai.us{}".format(img['file_url']))
-            if (random.random() * 100) > 75:
-                break
+        img = random.choice(imagelist)
+        hentaiimg = ("http://danbooru.donmai.us{}".format(img['file_url']))
             
         embed = discord.Embed(title='tag: '+imgtag).set_image(url=hentaiimg)
         await self.bot.say(embed=embed)
@@ -100,14 +95,11 @@ class anime():
                 if len(images) == 0:
                     await self.bot.say('No images found for ``{}``. Try another tag?'.format(imgtag))
                     return
-
-            for img in images:
-                try:
-                    himg = ("http://danbooru.donmai.us{0}".format(img['file_url']))
-                except KeyError:
-                    continue
-                if (random.random() * 100) < 65:
-                    break
+            try:
+                img = random.choice(images)
+                himg = ("http://danbooru.donmai.us{0}".format(img['file_url']))
+            except KeyError:
+                continue
                                
             embed = discord.Embed(title='tag: ' + imgtag).set_image(url=himg)
             await self.bot.send_message(ctx.message.author, embed=embed)
@@ -121,10 +113,8 @@ class anime():
         
         imagelist = self.danbooru.post_list(tags='thighhighs rating:safe', limit=5, random=True)
             
-        for img in imagelist:
-            animeimg = ("http://danbooru.donmai.us{}".format(img['file_url']))
-            if (random.random() * 100) > 80:
-                break
+        img = random.choice(imagelist)
+        animeimg = ("http://danbooru.donmai.us{}".format(img['file_url']))
             
         embed = discord.Embed(title='thighhighs').set_image(url=animeimg)
         await self.bot.say(embed=embed)
@@ -138,10 +128,8 @@ class anime():
 
         imagelist = self.danbooru.post_list(tags='cat_girl rating:safe', limit=5, random=True, page=random.randint(1, 30))
             
-        for img in imagelist:
-            animeimg = ("http://danbooru.donmai.us{}".format(img['file_url']))
-            if (random.random() * 100) > 80:
-                break
+        img = random.choice(imagelist)
+        animeimg = ("http://danbooru.donmai.us{}".format(img['file_url']))
             
         embed = discord.Embed(title=random.choice(catgirlmessage)).set_image(url=animeimg)
         await self.bot.say(embed=embed)
@@ -152,11 +140,9 @@ class anime():
         """The best things in the universe."""
 
         thicc = self.moebooru.post_list(tags='cleavage ass rating:safe order:score', limit=4, page=(random.randint(1, 35)))
-        
-        for img in thicc:
-            thiccimg = ("{0}".format(img['file_url']))
-            if (random.random() * 100) > 80:
-                break
+
+        img = random.choice(thicc)
+        thiccimg = ("{0}".format(img['file_url']))
             
         thiccembed = discord.Embed(title='T H I C C').set_image(url=thiccimg)
         await self.bot.say(embed=thiccembed)
@@ -176,11 +162,9 @@ class anime():
             if len(images) == 0:
                 await self.bot.say('No images found for the tags: ``{}``. Try some other tags?'.format(imgtags))
                 return
-        
-        for img in images:
-            weebimg = ("{0}".format(img['file_url']))
-            if (random.random() * 100) > 80:
-                break
+
+        img = random.choice(images)
+        weebimg = ("{0}".format(img['file_url']))
             
         weebembed = discord.Embed(title='tags: ' + imgtags).set_image(url=weebimg)
         await self.bot.say(embed=weebembed)
@@ -229,7 +213,7 @@ class anime():
             return
         
         animeweb = requests.get('https://twist.moe')
-        animeweb = BeautifulSoup(animeweb.text)
+        animeweb = BeautifulSoup(animeweb.text, 'lxml')
         animelist = animeweb.find_all("a", class_="series-title")
         animelinks = {}
         
