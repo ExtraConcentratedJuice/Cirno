@@ -140,7 +140,10 @@ class general():
 
         msg = '```Words processed in ' + str(round(timeend, 2)) + ' seconds.\n\n' + 'List of top ' + str(words) + ' commonly used words in #' + chan.name + ' in the past ' + str(days * 24) + ' hours:\n\n' + '\n'.join(countmsg)+ '```'
 
-        await self.bot.say(msg)
+        try:
+            await self.bot.say(msg)
+        except:
+            await self.bot.say('Message was too long, try a lower number of days.')
 
     @commands.command(pass_context=True)
     async def russianroulette(self, ctx):
