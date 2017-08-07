@@ -47,7 +47,8 @@ class general():
                     .add_field(name = "``!catgirl``", value = 'Gives you a catgirl.', inline = False) \
                     .add_field(name = "``!thicc``", value = 'T H I C C', inline = False) \
                     .add_field(name = "``!thighhighs``", value = 'Gives you thighhighs.', inline = False) \
-                    .add_field(name = "``!weebsearch``", value = 'Weeaboo image search. !searchhelp for usage.', inline = False) \
+                    .add_field(name = "``!weebsearch (tag1 tag2 character_name)``", value = 'Weeaboo image search. Separate tags by spaces. Spaces in character names represented by an underscore.', inline = False) \
+                    .add_field(name = "``!gelbooru (tag1 character_name)``", value = 'Same as !weebsearch, just on Gelbooru.', inline = False) \
                     .set_footer(text = 'Robo-Führer, by ExtraConcentratedJuice', icon_url = 'https://i.imgur.com/ItO8dUz.png')
         await self.bot.say(embed=embedhelp)
         

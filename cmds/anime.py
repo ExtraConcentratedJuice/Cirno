@@ -3,13 +3,13 @@ from discord.ext import commands
 import discord
 import json
 import re
-import requests
 from bs4 import BeautifulSoup
 import random
 import distance
 from urllib.parse import quote
 import yaml
 import bleach
+import aiohttp
 #hehe xD le api wrapper
 import spice_api as spice
 from pybooru import Danbooru, Moebooru, PybooruHTTPError
@@ -170,6 +170,41 @@ class anime():
         await self.bot.say(embed=weebembed)
 
     @commands.command(pass_context=True)
+    @commands.cooldown(1, 6, type=commands.BucketType.channel)
+    async def gelbooru(self, ctx, *, imgtags):
+        """A command to search for stuff on the yande.re imageboard."""
+
+        if 'nsfw' not in ctx.message.channel.name:
+            imgtags = imgtags.replace(' rating:explicit', '').replace(' rating:questionable', '')
+            imgtags = (imgtags + ' rating:safe')
+
+        params = {'tags' : imgtags, 'limit' : 25, 'pid' : (random.randint(1, 10))}
+        try:
+            async with aiohttp.get('https://gelbooru.com/index.php?page=dapi&s=post&q=index&json=1', params=params) as r:
+                images = await r.text()
+                images = json.loads(images)
+            if len(images) == 0:
+                raise ValueError('No images found.')
+        except:
+            try:
+                params = {'tags' : imgtags, 'limit' : 30}
+                async with aiohttp.get('https://gelbooru.com/index.php?page=dapi&s=post&q=index&json=1', params=params) as r:
+                    images = await r.text()
+                    images = json.loads(images)
+                if len(images) == 0:
+                    raise ValueError('No images found.')
+            except:
+                await self.bot.say('No images found for the tags: ``{}``. Try some other tags?'.format(imgtags))
+                return
+
+
+        img = random.choice(images)
+        weebimg = ("http:{0}".format(img['file_url']))
+            
+        weebembed = discord.Embed(title='tags: ' + imgtags).set_image(url=weebimg)
+        await self.bot.say(embed=weebembed)
+
+    @commands.command(pass_context=True)
     @commands.cooldown(2, 10, type=commands.BucketType.channel)
     async def animeinfo(self, ctx, *, animename):
         """Gets you anime info from MAL"""
@@ -212,8 +247,9 @@ class anime():
             await self.bot.say('No such anime seems to exist. Not in the MAL database, at least.')
             return
         
-        animeweb = requests.get('https://twist.moe')
-        animeweb = BeautifulSoup(animeweb.text, 'lxml')
+        async with aiohttp.get('https://twist.moe') as r:
+            animeweb = await r.text()
+        animeweb = BeautifulSoup(animeweb, 'lxml')
         animelist = animeweb.find_all("a", class_="series-title")
         animelinks = {}
         
