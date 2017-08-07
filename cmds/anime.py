@@ -13,6 +13,7 @@ import aiohttp
 #hehe xD le api wrapper
 import spice_api as spice
 from pybooru import Danbooru, Moebooru, PybooruHTTPError
+import textwrap
 
 
 
@@ -47,7 +48,9 @@ class anime():
         img = random.choice(imagelist)
         animeimg = ("http://danbooru.donmai.us{}".format(img['file_url']))
             
-        embed = discord.Embed(title='tag: '+imgtag).set_image(url=animeimg)
+        embed = discord.Embed(title='tag: '+imgtag) \
+        .set_image(url=animeimg) \
+        .set_footer(text='https://danbooru.donmai.us', icon_url='http://i.imgur.com/4Wjm9rb.png')
         await self.bot.say(embed=embed)
 
     @commands.command(pass_context=True)
@@ -72,7 +75,9 @@ class anime():
         img = random.choice(imagelist)
         hentaiimg = ("http://danbooru.donmai.us{}".format(img['file_url']))
             
-        embed = discord.Embed(title='tag: '+imgtag).set_image(url=hentaiimg)
+        embed = discord.Embed(title='tag: '+imgtag) \
+        .set_image(url=hentaiimg) \
+        .set_footer(text='https://danbooru.donmai.us', icon_url='http://i.imgur.com/4Wjm9rb.png')
         await self.bot.say(embed=embed)
 
     @commands.command(pass_context=True)
@@ -101,7 +106,9 @@ class anime():
             except KeyError:
                 continue
                                
-            embed = discord.Embed(title='tag: ' + imgtag).set_image(url=himg)
+            embed = discord.Embed(title='tag: ' + imgtag) \
+            .set_image(url=himg) \
+            .set_footer(text='https://danbooru.donmai.us', icon_url='http://i.imgur.com/4Wjm9rb.png')
             await self.bot.send_message(ctx.message.author, embed=embed)
             count += 1
         await self.bot.send_message(ctx.message.channel, 'Check your inbox for some fresh hentai, '+ ctx.message.author.mention + '.')
@@ -116,7 +123,9 @@ class anime():
         img = random.choice(imagelist)
         animeimg = ("http://danbooru.donmai.us{}".format(img['file_url']))
             
-        embed = discord.Embed(title='thighhighs').set_image(url=animeimg)
+        embed = discord.Embed(title='thighhighs') \
+        .set_image(url=animeimg) \
+        .set_footer(text='https://danbooru.donmai.us', icon_url='http://i.imgur.com/4Wjm9rb.png')
         await self.bot.say(embed=embed)
 
     @commands.command(pass_context=True)
@@ -131,9 +140,10 @@ class anime():
         img = random.choice(imagelist)
         animeimg = ("http://danbooru.donmai.us{}".format(img['file_url']))
             
-        embed = discord.Embed(title=random.choice(catgirlmessage)).set_image(url=animeimg)
+        embed = discord.Embed(title=random.choice(catgirlmessage)) \
+        .set_image(url=animeimg) \
+        .set_footer(text='https://danbooru.donmai.us', icon_url='http://i.imgur.com/4Wjm9rb.png')
         await self.bot.say(embed=embed)
-
     @commands.command(pass_context=True)
     @commands.cooldown(5, 3, type=commands.BucketType.channel)
     async def thicc(self, ctx):
@@ -144,7 +154,9 @@ class anime():
         img = random.choice(thicc)
         thiccimg = ("{0}".format(img['file_url']))
             
-        thiccembed = discord.Embed(title='T H I C C').set_image(url=thiccimg)
+        thiccembed = discord.Embed(title='T H I C C') \
+        .set_image(url=thiccimg) \
+        .set_footer(text='https://yande.re', icon_url='http://i.imgur.com/jemLswy.png')
         await self.bot.say(embed=thiccembed)
 
     @commands.command(pass_context=True)
@@ -162,12 +174,14 @@ class anime():
             if len(images) == 0:
                 await self.bot.say('No images found for the tags: ``{}``. Try some other tags?'.format(imgtags))
                 return
-
-        img = random.choice(images)
-        weebimg = ("{0}".format(img['file_url']))
             
-        weebembed = discord.Embed(title='tags: ' + imgtags).set_image(url=weebimg)
+        img = random.choice(images)
+        weebimg = ("{}".format(img['file_url']))
+        weebembed = discord.Embed(title='tags: ' + imgtags, description='``' + textwrap.fill(weebimg, 30) + '``') \
+        .set_image(url=weebimg) \
+        .set_footer(text='https://yande.re', icon_url='http://i.imgur.com/jemLswy.png')
         await self.bot.say(embed=weebembed)
+
 
     @commands.command(pass_context=True)
     @commands.cooldown(1, 6, type=commands.BucketType.channel)
@@ -199,9 +213,22 @@ class anime():
 
 
         img = random.choice(images)
-        weebimg = ("http:{0}".format(img['file_url']))
-            
-        weebembed = discord.Embed(title='tags: ' + imgtags).set_image(url=weebimg)
+        #fix for webm. faggots at discord need to support webm NOW
+        if '.webm' in img['file_url']:
+            for image in images:
+                if '.webm' in image['file_url']:
+                    continue
+                else:
+                    img = image
+
+        if '.webm' in img['file_url']:
+            await self.bot.say('Discord doesn\'t support webms in embeds, and it looks like there were no other images that aren\'t webms. Here is the image that was found:\n\nhttp:{}'.format(img['file_url']))
+            return
+        
+        weebimg = ("https:{0}".format(img['file_url']))
+        weebembed = discord.Embed(title='tags: ' + imgtags, description='``' + textwrap.fill(weebimg, 38) + '``') \
+        .set_image(url=weebimg) \
+        .set_footer(text='https://gelbooru.com', icon_url='http://i.imgur.com/UVGcJdK.png')
         await self.bot.say(embed=weebembed)
 
     @commands.command(pass_context=True)
