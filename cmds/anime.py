@@ -280,8 +280,8 @@ class anime():
         except:
             async with aiohttp.get('https://twist.moe') as r:
                 alist = await r.text()
-            f = open('twistlist.html', 'w')
-            f.write(alist.encode('ascii', 'ignore').decode('ascii'))
+            f = open('twistlist.html', 'wb')
+            f.write(alist.encode('utf-8'))
             f.close
             pickle.dump(time.time(), open('timeinfo', 'wb'))
 
@@ -294,7 +294,7 @@ class anime():
             pickle.dump(time.time(), open('timeinfo', 'wb'))
             print('LIST UPDATED')
 
-        f = open('twistlist.html', 'r')
+        f = open('twistlist.html', 'rb')
         animeweb = f.read()
         animeweb = BeautifulSoup(animeweb, 'lxml')
         f.close()
