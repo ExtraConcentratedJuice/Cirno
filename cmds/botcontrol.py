@@ -37,7 +37,38 @@ class botcontrol():
         bl.close()
         await self.bot.add_reaction(ctx.message, '\U0001F44C')
         await self.bot.say('I no longer take orders from that faggot ' + ctx.message.mentions[0].mention + '.')
+
+    @commands.command(pass_context=True)
+    async def rfunblacklist(self, ctx, *, module):
+        """Unblacklists a user."""
+        if ctx.message.author.id != self.owner:
+            await self.bot.say('no ur gay')
+            return
+
+        if len(ctx.message.mentions) != 1:
+            await self.bot.say('You\'re supposed to mention 1 user, retard.')
+            return
+
+        blackuser = ''.join(ctx.message.mentions[0].id)
+
+        bannedlist = open('blacklist.txt', 'r')
+        bannedusers = bannedlist.read().splitlines()
         
+        if blackuser not in bannedusers:
+            await self.bot.say('The user that you mentioned is not blacklisted.')
+            return
+
+        bannedlist.close()
+
+        with open('blacklist.txt', 'r') as f:
+            newbans = f.read().replace(blackuser + '\n', '')
+            f.close()
+        with open('blacklist.txt', "w+") as f:
+            f.write(newbans)
+            f.close()
+        
+        await self.bot.add_reaction(ctx.message, '\U0001F44C')
+        await self.bot.say(ctx.message.mentions[0].mention + ' has been unblacklisted.')
             
     @commands.command(pass_context=True)
     async def rfreload(self, ctx, *, module):
