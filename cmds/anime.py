@@ -305,7 +305,7 @@ class anime():
             animelinks[item['data-title']] = item['href']
             
         for k, v in animelinks.items():
-            if distance.levenshtein(animetitle.lower(), k.lower()) < 4:
+            if distance.levenshtein(animetitle.lower(), k.lower()) < 2:
                 animelink = v
                 stream_success = True
                 break
