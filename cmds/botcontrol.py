@@ -12,6 +12,34 @@ class botcontrol():
     owner = config['owner']
 
     @commands.command(pass_context=True)
+    async def rfblacklist(self, ctx, *, user):
+        """Lets you blacklist a user."""
+        if ctx.message.author.id != self.owner:
+            await self.bot.say('no ur gay')
+            return
+        
+        if len(ctx.message.mentions) != 1:
+            await self.bot.say('You\'re supposed to mention 1 user, retard.')
+            return
+        
+        blackman = ''.join(ctx.message.mentions[0].id)
+        bannedlist = open('blacklist.txt', 'r')
+        bannedusers = bannedlist.read().splitlines()
+        
+        if blackman in bannedusers:
+            await self.bot.say('This faggot is already blacklisted.')
+            return
+
+        bannedlist.close()
+
+        bl = open('blacklist.txt', 'a')
+        bl.write(blackman + '\n')
+        bl.close()
+        await self.bot.add_reaction(ctx.message, '\U0001F44C')
+        await self.bot.say('I no longer take orders from that faggot ' + ctx.message.mentions[0].mention + '.')
+        
+            
+    @commands.command(pass_context=True)
     async def rfreload(self, ctx, *, module):
         """Lets you reload a command module."""
         if ctx.message.author.id != self.owner:

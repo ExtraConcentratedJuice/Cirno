@@ -1,4 +1,3 @@
-# -*- coding: cp1252 -*-
 from discord.ext import commands
 import discord
 import logging
@@ -22,6 +21,17 @@ async def on_command_error(error, ctx):
         await bot.send_message(ctx.message.channel, '``Error | Too many arguments.``')
     else:
        print(type(error))
+
+@bot.event
+async def on_message(message):
+    with open('blacklist.txt', 'r') as f:
+        bannedusers = f.read().splitlines()
+        if message.author.id in bannedusers:
+            return
+
+        f.close()
+        
+    await bot.process_commands(message)
         
 @bot.event
 async def on_ready():

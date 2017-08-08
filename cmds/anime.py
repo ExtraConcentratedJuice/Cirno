@@ -84,7 +84,7 @@ class anime():
         await self.bot.say(embed=embed)
 
     @commands.command(pass_context=True)
-    @commands.cooldown(1, 12, type=commands.BucketType.channel)
+    @commands.cooldown(1, 15, type=commands.BucketType.channel)
     async def hentaibomb(self, ctx, *, imgtag):
         """No."""
         
