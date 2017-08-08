@@ -10,6 +10,9 @@ from urllib.parse import quote
 import yaml
 import bleach
 import aiohttp
+import pickle
+import time
+import asyncio
 #hehe xD le api wrapper
 import spice_api as spice
 from pybooru import Danbooru, Moebooru, PybooruHTTPError
@@ -85,10 +88,9 @@ class anime():
     async def hentaibomb(self, ctx, *, imgtag):
         """No."""
         
-        count = 0
         await self.bot.add_reaction(ctx.message, '\U0001F44C')
 
-        while count < random.randint(4,8):
+        for i in range(random.randint(3, 9)):
             try:
                 images = self.danbooru.post_list(tags=imgtag + ' rating:explicit', limit=10, random=True, page=random.randint(1,11))
             except PybooruHTTPError:
@@ -110,7 +112,6 @@ class anime():
             .set_image(url=himg) \
             .set_footer(text='https://danbooru.donmai.us', icon_url='http://i.imgur.com/4Wjm9rb.png')
             await self.bot.send_message(ctx.message.author, embed=embed)
-            count += 1
         await self.bot.send_message(ctx.message.channel, 'Check your inbox for some fresh hentai, '+ ctx.message.author.mention + '.')
 
     @commands.command(pass_context=True)
@@ -274,9 +275,29 @@ class anime():
             await self.bot.say('No such anime seems to exist. Not in the MAL database, at least.')
             return
         
-        async with aiohttp.get('https://twist.moe') as r:
-            animeweb = await r.text()
+        try:
+            oldtime = pickle.load(open('timeinfo', 'rb'))
+        except:
+            async with aiohttp.get('https://twist.moe') as r:
+                alist = await r.text()
+            f = open('twistlist.html', 'w')
+            f.write(alist.encode('ascii', 'ignore').decode('ascii'))
+            f.close
+            pickle.dump(time.time(), open('timeinfo', 'wb'))
+
+        if (time.time() - oldtime) > 43200:
+            async with aiohttp.get('https://twist.moe') as r:
+                alist = await r.text()
+            f = open('twistlist.html', 'w')
+            f.write(alist.encode('ascii', 'ignore').decode('ascii'))
+            f.close
+            pickle.dump(time.time(), open('timeinfo', 'wb'))
+            print('LIST UPDATED')
+
+        f = open('twistlist.html', 'r')
+        animeweb = f.read()
         animeweb = BeautifulSoup(animeweb, 'lxml')
+        f.close()
         animelist = animeweb.find_all("a", class_="series-title")
         animelinks = {}
         
