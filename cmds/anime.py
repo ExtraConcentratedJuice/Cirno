@@ -307,6 +307,11 @@ class anime():
         for k, v in animelinks.items():
             if distance.levenshtein(animetitle.lower(), k.lower()) < 2:
                 animelink = v
+                #Fix for "second season" anime titles, so you don't get season one.
+                if k.lower() != animetitle.lower():
+                    for k, v in animelinks.items():
+                        if animetitle.lower() == k.lower():
+                            animelink = v
                 stream_success = True
                 break
             
