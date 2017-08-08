@@ -284,6 +284,7 @@ class anime():
             f.write(alist.encode('utf-8'))
             f.close
             pickle.dump(time.time(), open('timeinfo', 'wb'))
+            oldtime = pickle.load(open('timeinfo', 'rb'))
 
         if (time.time() - oldtime) > 43200:
             async with aiohttp.get('https://twist.moe') as r:
