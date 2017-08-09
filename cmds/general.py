@@ -114,7 +114,7 @@ class general():
 
         chan = self.bot.get_channel(channel)
         
-        async for message in self.bot.logs_from(chan, limit=1200, after=dateafter):
+        async for message in self.bot.logs_from(chan, limit=12000, after=dateafter):
             if message.author.bot:
                 continue
             if message.author == self.bot.user:
