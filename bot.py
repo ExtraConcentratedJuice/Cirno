@@ -2,6 +2,7 @@ from discord.ext import commands
 import discord
 import logging
 import yaml
+import sqlite3
 
 logging.basicConfig(level=logging.INFO)
 
@@ -24,13 +25,14 @@ async def on_command_error(error, ctx):
 
 @bot.event
 async def on_message(message):
-    with open('blacklist.txt', 'r') as f:
-        bannedusers = f.read().splitlines()
-        if message.author.id in bannedusers:
-            return
+    db = sqlite3.connect('data/banned.db')
+    c = db.cursor()
+    c.execute('SELECT * FROM users WHERE id= ?', (message.author.id,))
+    
+    if c.fetchone() != None:
+        return
 
-        f.close()
-        
+    db.close()
     await bot.process_commands(message)
         
 @bot.event
@@ -39,6 +41,13 @@ async def on_ready():
     print(bot.user.name)
     print(bot.user.id)
     await bot.change_presence(game=discord.Game(name='the Holocaust', url="https://twitch.tv/meme", type=1))
+
+    #checks if blacklist database exists, creates one if it doesn't
+    db = sqlite3.connect('data/banned.db')
+    c = db.cursor()
+    c.execute('CREATE TABLE IF NOT EXISTS users(id INTEGER PRIMARY KEY, name TEXT)')
+    db.commit()
+    db.close()
 
 with open("config.yaml", 'r') as f:
     config = yaml.load(f)

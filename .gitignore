@@ -9,3 +9,4 @@ test.yaml
 sb.bat
 /cmds/lol.py
 abot.py
+data/banned.db
