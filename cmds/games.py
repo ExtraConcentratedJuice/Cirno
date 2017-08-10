@@ -4,6 +4,7 @@ import json
 import requests
 import random
 import yaml
+import aiohttp
 #lul xD api wrapper
 import steam
 
@@ -15,9 +16,11 @@ class games():
         config = yaml.load(f)
         
     steam.api.key.set(config['steamkey'])
+
+    osukey = config['osukey']
     
     @commands.command(pass_context=True)
-    @commands.cooldown(1, 6, type=commands.BucketType.user)
+    @commands.cooldown(1, 8, type=commands.BucketType.channel)
     async def stats(self, ctx, player):
         """Gets you those Unturned stats."""
         
@@ -50,6 +53,7 @@ class games():
             await self.bot.say("Looks like this user's profile is private, or they've never played Unturned before. Maybe they don\'t even exist! Enter a proper community ID or ID64 next time.")
 
     @commands.command(pass_context=True)
+    @commands.cooldown(1, 8, type=commands.BucketType.channel)
     async def steamid(self, ctx, steamid):
         """Convert from Vanity URL to ID64"""
         
@@ -61,5 +65,52 @@ class games():
             return
 
         await self.bot.say('```Steam Vanity URL > Steam ID 64\n\nUser: {}\n\nVanity URL: {}\n\nSteam ID 64: {}```'.format(steamname, steamid, str(converted)))
+
+    @commands.command(pass_context=True)
+    @commands.cooldown(1, 8, type=commands.BucketType.channel)
+    async def osu(self, ctx, user):
+        """Gives osu! statistics"""
+        
+        params = {'k' : self.osukey, 'u' : user}
+
+        try:
+            async with aiohttp.post('https://osu.ppy.sh/api/get_user', data=params) as r:
+                data = await r.text()
+                data = json.loads(data)[0]
+        except IndexError:
+            await self.bot.say('The specified user (``{}``) was not found.'.format(user))
+            return
+        except Exception as e:
+            await self.bot.say('``ERROR | {}``'.format(str(e)))
+            return
+
+        userid = data['user_id']
+        username = data['username']
+        playcount = data['playcount']
+        totalscore = data['total_score']
+        pprank = data['pp_rank']
+        level = round(float(data['level']), 2)
+        rawpp = data['pp_raw']
+        accuracy = round(float(data['accuracy']), 2)
+        country = data['country']
+        rankcountry = data['pp_country_rank']
+
+        embed = discord.Embed(title='osu! Standard Mode') \
+                .set_author(name=username, icon_url='https://a.ppy.sh/{}'.format(userid)) \
+                .set_thumbnail(url='https://a.ppy.sh/{}'.format(userid)) \
+                .set_footer(text='Information retrieved from the osu! api. https://osu.ppy.sh/api/', icon_url='https://up.ppy.sh/files/osu!logo4-0.png') \
+                .add_field(name='Username', value=username, inline=False) \
+                .add_field(name='User ID', value=userid, inline=False) \
+                .add_field(name='Rank', value='#{:,}'.format(int(pprank)), inline=False) \
+                .add_field(name='Plays', value='{:,}'.format(int(playcount)), inline=False) \
+                .add_field(name='Performance', value='{:,} pp'.format(round(float(rawpp)), 0), inline=False) \
+                .add_field(name='Accuracy', value='{}%'.format(accuracy), inline=False) \
+                .add_field(name='Total Score', value='{:,}'.format(int(totalscore)), inline=False) \
+                .add_field(name='Country Rank', value='#{:,}'.format(int(rankcountry)), inline=False) \
+                .add_field(name='Country', value=country, inline=False)
+                
+        await self.bot.say(embed=embed)
+            
+
 def setup(bot):
     bot.add_cog(games(bot))

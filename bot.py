@@ -23,7 +23,7 @@ async def on_command_error(error, ctx):
     elif isinstance(error, commands.CheckFailure):
         pass
     else:
-       print(type(error) + ' ' + str(error))
+        print(str(error))
 
 @bot.check
 def is_blacklisted(ctx):

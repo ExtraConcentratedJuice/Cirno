@@ -221,6 +221,7 @@ class anime():
                     continue
                 else:
                     img = image
+                    break
 
         if '.webm' in img['file_url']:
             await self.bot.say('Discord doesn\'t support webms in embeds, and it looks like there were no other images that aren\'t webms. Here is the image that was found:\n\nhttp:{}'.format(img['file_url']))
