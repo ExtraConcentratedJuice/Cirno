@@ -20,20 +20,30 @@ async def on_command_error(error, ctx):
         await bot.send_message(ctx.message.channel, '``Error | Bad argument(s).``')
     elif isinstance(error, commands.TooManyArguments):
         await bot.send_message(ctx.message.channel, '``Error | Too many arguments.``')
+    elif isinstance(error, commands.CheckFailure):
+        pass
     else:
-       print(type(error))
+       print(type(error) + ' ' + str(error))
 
-@bot.event
-async def on_message(message):
-    db = sqlite3.connect('data/banned.db')
-    c = db.cursor()
-    c.execute('SELECT * FROM users WHERE id= ?', (message.author.id,))
+@bot.check
+def is_blacklisted(ctx):
+    """Checks if a user is blacklisted or not."""
     
-    if c.fetchone() != None:
-        return
-
-    db.close()
-    await bot.process_commands(message)
+    try:
+        db = sqlite3.connect('data/banned.db')
+        c = db.cursor()
+        c.execute('SELECT * FROM users WHERE id= ?', (ctx.message.author.id,))
+        
+        if c.fetchone() != None:
+            db.close()
+            return False
+        else:
+            db.close()
+            return True
+        
+    except:
+        db.close()
+        return True
         
 @bot.event
 async def on_ready():

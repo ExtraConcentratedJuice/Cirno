@@ -187,7 +187,7 @@ class anime():
     @commands.command(pass_context=True)
     @commands.cooldown(1, 6, type=commands.BucketType.channel)
     async def gelbooru(self, ctx, *, imgtags):
-        """A command to search for stuff on the yande.re imageboard."""
+        """A command to search for stuff on the Gelbooru imageboard."""
 
         if 'nsfw' not in ctx.message.channel.name:
             imgtags = imgtags.replace(' rating:explicit', '').replace(' rating:questionable', '')
