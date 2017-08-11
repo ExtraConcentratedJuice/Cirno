@@ -1,0 +1,1 @@
+This directory (/data) is for data files. Do not delete it.
