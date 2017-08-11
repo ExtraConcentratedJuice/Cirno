@@ -52,10 +52,16 @@ async def on_ready():
     print(bot.user.id)
     await bot.change_presence(game=discord.Game(name='the Holocaust', url="https://twitch.tv/meme", type=1))
 
-    #checks if blacklist database exists, creates one if it doesn't
+    #creates databases
     db = sqlite3.connect('data/banned.db')
     c = db.cursor()
     c.execute('CREATE TABLE IF NOT EXISTS users(id INTEGER PRIMARY KEY, name TEXT)')
+    db.commit()
+    db.close()
+    
+    db = sqlite3.connect('data/data.db')
+    c = db.cursor()
+    c.execute('CREATE TABLE IF NOT EXISTS data(href TEXT PRIMARY KEY, data_title TEXT, data_alt TEXT, time REAL)')
     db.commit()
     db.close()
 

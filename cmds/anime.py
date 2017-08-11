@@ -10,9 +10,9 @@ from urllib.parse import quote
 import yaml
 import bleach
 import aiohttp
-import pickle
 import time
 import asyncio
+import sqlite3
 #hehe xD le api wrapper
 import spice_api as spice
 from pybooru import Danbooru, Moebooru, PybooruHTTPError
@@ -264,10 +264,39 @@ class anime():
     @commands.cooldown(3, 8, type=commands.BucketType.channel)
     async def animestream(self, ctx, *, animename):
         """Gets you an illegal anime stream"""
-        
-        #i should probably fix this shitcode sooner or later
-        
+
         stream_success = False
+        db = sqlite3.connect('data/data.db')
+        c = db.cursor()     
+        c.execute('SELECT time FROM data ORDER BY ROWID ASC LIMIT 1')
+        
+        try:
+            lastupdated = c.fetchone()[0]
+        except (IndexError, TypeError):
+            lastupdated = 0
+            
+        if (time.time() - lastupdated) > 43200:
+            await self.bot.say('``Cached list is out of date, retrieving new information and updating database.``')
+            async with aiohttp.get('https://twist.moe') as r:
+                alist = await r.text()
+                
+            animeweb = BeautifulSoup(alist, 'lxml')
+            animelist = animeweb.find_all("a", class_="series-title")
+            c.execute('DELETE FROM data')
+            db.commit()
+            c.execute('VACUUM')
+            db.commit()
+            
+            for a in animelist:
+                try:
+                    element = {'href' : a['href'], 'data_title' : a['data-title'], 'data_alt' : a['data-alt'], 'time' : time.time()}
+                except KeyError:
+                    element = {'href' : a['href'], 'data_title' : a['data-title'], 'data_alt' : None, 'time' : time.time()}
+                c.execute('INSERT INTO data(href, data_title, data_alt, time) VALUES(?,?,?,?)', (element['href'], element['data_title'], element['data_alt'], element['time']))
+
+            db.commit()
+            print('List Updated.')
+                
         try:
             animeinfo = spice.search(animename, spice.get_medium('anime'), self.creds)
             animetitle = animeinfo[0].title
@@ -275,36 +304,12 @@ class anime():
         except IndexError:
             await self.bot.say('No such anime seems to exist. Not in the MAL database, at least.')
             return
-        
-        try:
-            oldtime = pickle.load(open('timeinfo', 'rb'))
-        except:
-            async with aiohttp.get('https://twist.moe') as r:
-                alist = await r.text()
-            f = open('twistlist.html', 'wb')
-            f.write(alist.encode('utf-8'))
-            f.close
-            pickle.dump(time.time(), open('timeinfo', 'wb'))
-            oldtime = pickle.load(open('timeinfo', 'rb'))
 
-        if (time.time() - oldtime) > 43200:
-            async with aiohttp.get('https://twist.moe') as r:
-                alist = await r.text()
-            f = open('twistlist.html', 'w')
-            f.write(alist.encode('ascii', 'ignore').decode('ascii'))
-            f.close
-            pickle.dump(time.time(), open('timeinfo', 'wb'))
-            print('LIST UPDATED')
-
-        f = open('twistlist.html', 'rb')
-        animeweb = f.read()
-        animeweb = BeautifulSoup(animeweb, 'lxml')
-        f.close()
-        animelist = animeweb.find_all("a", class_="series-title")
+        c.execute('SELECT * FROM data')
         animelinks = {}
         
-        for item in animelist:
-            animelinks[item['data-title']] = item['href']
+        for a in c.fetchall():
+            animelinks[a[1]] = a[0]
             
         for k, v in animelinks.items():
             if distance.levenshtein(animetitle.lower(), k.lower()) < 2:
@@ -318,28 +323,31 @@ class anime():
                 break
             
         if stream_success == False:
+            c.execute('SELECT * FROM data')
             animelinks = {}
-            for item in animelist:
-                try:
-                    animelinks[item['data-alt']] = item['href']
-                except KeyError:
-                    continue
+            
+            for a in c.fetchall():
+                animelinks[a[2]] = a[0]
                 
             for k, v in animelinks.items():
-                if distance.levenshtein(animetitle.lower(), k.lower()) < 2:
-                    animelink = v
-                    if k.lower() != animetitle.lower():
-                        for k, v in animelinks.items():
-                            if animetitle.lower() == k.lower():
-                                animelink = v
-                    stream_success = True
-                    break
+                try:
+                    if distance.levenshtein(animetitle.lower(), k.lower()) < 2:
+                        animelink = v
+                        if k.lower() != animetitle.lower():
+                            for k, v in animelinks.items():
+                                if animetitle.lower() == k.lower():
+                                    animelink = v
+                        stream_success = True
+                        break
+                except AttributeError:
+                    continue
 
             if stream_success == False:
                 htmlurl = quote(animetitle, safe='')
                 await self.bot.say('The anime (*' + animetitle + '*) does not seem to exist in the twist.moe streams.\n\nHere are some pages pointing to what you might be looking for:\n\n__**Nyaa**__\n\nhttps://nyaa.pantsu.cat/search?c=_&userID=0&q=' + htmlurl + '\n\n__**Gayanime**__\n\nhttp://kissanime.ru/Search/Anime?keyword=' + htmlurl)
                 return
-                
+
+        db.close()
         twistembed = discord.Embed(title=animetitle, url='https://twist.moe' + animelink, description='Click on the link above for a highly illegal anime stream!', color=10038562).set_thumbnail(url=animethumb).set_footer(text='twist.moe')
         await self.bot.say(embed=twistembed)
             
