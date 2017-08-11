@@ -268,7 +268,7 @@ class anime():
         stream_success = False
         db = sqlite3.connect('data/data.db')
         c = db.cursor()     
-        c.execute('SELECT time FROM data ORDER BY ROWID ASC LIMIT 1')
+        c.execute('SELECT time FROM data')
         
         try:
             lastupdated = c.fetchone()[0]
