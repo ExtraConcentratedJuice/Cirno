@@ -196,17 +196,17 @@ class anime():
 
         params = {'tags' : imgtags, 'limit' : 25, 'pid' : (random.randint(1, 10))}
         try:
-            async with aiohttp.get('https://gelbooru.com/index.php?page=dapi&s=post&q=index&json=1', params=params) as r:
-                images = await r.text()
-                images = json.loads(images)
+            async with aiohttp.ClientSession() as session:
+                async with session.get('https://gelbooru.com/index.php?page=dapi&s=post&q=index&json=1', params=params) as resp:
+                    images = await resp.json()
             if len(images) == 0:
                 raise ValueError('No images found.')
         except:
             try:
                 params = {'tags' : imgtags, 'limit' : 30}
-                async with aiohttp.get('https://gelbooru.com/index.php?page=dapi&s=post&q=index&json=1', params=params) as r:
-                    images = await r.text()
-                    images = json.loads(images)
+                async with aiohttp.ClientSession() as session:
+                    async with session.get('https://gelbooru.com/index.php?page=dapi&s=post&q=index&json=1', params=params) as resp:
+                        images = await resp.json()
                 if len(images) == 0:
                     raise ValueError('No images found.')
             except:
@@ -279,8 +279,9 @@ class anime():
         if (time.time() - lastupdated) > 86400:
             await self.bot.say('``Cached list is out of date, retrieving new information and updating database.``')
             
-            r = requests.get('https://twist.moe')
-            alist = r.text
+            async with aiohttp.ClientSession() as session:
+                async with session.get('https://twist.moe') as resp:
+                    alist = await resp.text()
                 
             animeweb = BeautifulSoup(alist, 'lxml')
             animelist = animeweb.find_all("a", class_="series-title")

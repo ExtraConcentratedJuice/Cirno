@@ -74,9 +74,11 @@ class games():
         params = {'k' : self.osukey, 'u' : user}
 
         try:
-            async with aiohttp.post('https://osu.ppy.sh/api/get_user', data=params) as r:
-                data = await r.text()
-                data = json.loads(data)[0]
+            async with aiohttp.ClientSession() as session:
+                async with session.post('https://osu.ppy.sh/api/get_user', data=params) as resp:
+                    data = await resp.json()
+                    data = data[0]
+                    
         except IndexError:
             await self.bot.say('The specified user (``{}``) was not found.'.format(user))
             return
