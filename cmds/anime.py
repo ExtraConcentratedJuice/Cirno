@@ -6,6 +6,7 @@ import re
 from bs4 import BeautifulSoup
 import random
 import distance
+import requests
 from urllib.parse import quote
 import yaml
 import bleach
@@ -275,10 +276,11 @@ class anime():
         except (IndexError, TypeError):
             lastupdated = 0
             
-        if (time.time() - lastupdated) > 43200:
+        if (time.time() - lastupdated) > 86400:
             await self.bot.say('``Cached list is out of date, retrieving new information and updating database.``')
-            async with aiohttp.get('https://twist.moe') as r:
-                alist = await r.text()
+            
+            r = requests.get('https://twist.moe')
+            alist = r.text
                 
             animeweb = BeautifulSoup(alist, 'lxml')
             animelist = animeweb.find_all("a", class_="series-title")
