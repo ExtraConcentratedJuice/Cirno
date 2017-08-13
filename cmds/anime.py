@@ -16,7 +16,6 @@ import asyncio
 import sqlite3
 #hehe xD le api wrapper
 import spice_api as spice
-from pybooru import Danbooru, Moebooru, PybooruHTTPError
 import textwrap
 
 
@@ -26,32 +25,55 @@ class anime():
     def __init__(self, bot):
         self.bot = bot
 
+    async def fetchlist(self, service, params):
+        """post list request function"""
+        
+        if service == 'yandere':
+            url = 'https://yande.re/post.json'
+        elif service == 'danbooru':
+            url = 'https://danbooru.donmai.us/posts.json'
+        elif service == 'gelbooru':
+            url = 'https://gelbooru.com/index.php?page=dapi&s=post&q=index&json=1'
+        else:
+            raise ValueError('Invalid service. Must be yandere, danbooru, or gelbooru.')
+        try:
+            async with aiohttp.ClientSession() as session:
+                async with session.get(url, params=params) as resp:
+                    images = await resp.json()
+        except:
+            raise SystemError('Request failed.')
+        
+        return images
+
     with open("config.yaml", 'r') as f:
         config = yaml.load(f)
         
     creds = spice.init_auth(config['MALAuth']['username'], config['MALAuth']['password'])
-
-    moebooru = Moebooru('yandere')
-    danbooru = Danbooru('danbooru')
 
     @commands.command(pass_context=True)
     @commands.cooldown(5, 6, type=commands.BucketType.channel)
     async def animeimg(self, ctx, *, imgtag):
         """Gives you an anime image."""
 
-        try:
-            imagelist = self.danbooru.post_list(tags=(imgtag + ' rating:safe'), limit=5, random=True)
-        except PybooruHTTPError:
-            await self.bot.say('Danbooru has a limitation on tags. Please use only one tag.')
-            return
+        params = {'tags' : imgtag + ' rating:safe', 'limit' : 5, 'random' : 'true'}
         
+        try:
+            imagelist = await self.fetchlist('danbooru', params)
+        except SystemError:
+            await self.bot.send_message(ctx.message.channel, '``An internal error has occurred.``')
+            return
+
         if len(imagelist) == 0:
             await self.bot.say('No images were found for ``{}``. Try another tag.'.format(imgtag))
             return
-
-        img = random.choice(imagelist)
-        animeimg = ("http://danbooru.donmai.us{}".format(img['file_url']))
-            
+        
+        try:
+            img = random.choice(imagelist)
+        except KeyError:
+            await self.bot.say('Danbooru has a limitation on tags. Please use only one tag.')
+            return
+        
+        animeimg = ("https://danbooru.donmai.us{}".format(img['file_url']))
         embed = discord.Embed(title='tag: '+imgtag) \
         .set_image(url=animeimg) \
         .set_footer(text='https://danbooru.donmai.us', icon_url='http://i.imgur.com/4Wjm9rb.png')
@@ -62,22 +84,29 @@ class anime():
     async def hentaiimg(self, ctx, *, imgtag):
         """No."""
         
+        params = {'tags' : imgtag + ' rating:explicit', 'limit' : 5, 'random' : 'true'}
+        
         if 'nsfw' not in ctx.message.channel.name:
             await self.bot.say('You must be in a channel with ``nsfw`` in it\'s name to use this command.')
             return
         
         try:
-            imagelist = self.danbooru.post_list(tags=(imgtag + ' rating:explicit'), limit=5, random=True)
-        except PybooruHTTPError:
-            await self.bot.say('Danbooru has a limitation on tags. Please use only one tag.')
+            imagelist = await self.fetchlist('danbooru', params)
+        except SystemError:
+            await self.bot.send_message(ctx.message.channel, '``An internal error has occurred.``')
             return
         
         if len(imagelist) == 0:
             await self.bot.say('No images were found for ``{}``. Try another tag.'.format(imgtag))
             return
-            
-        img = random.choice(imagelist)
-        hentaiimg = ("http://danbooru.donmai.us{}".format(img['file_url']))
+        
+        try:
+            img = random.choice(imagelist)
+        except KeyError:
+            await self.bot.say('Danbooru has a limitation on tags. Please use only one tag.')
+            return
+
+        hentaiimg = ("https://danbooru.donmai.us{}".format(img['file_url']))
             
         embed = discord.Embed(title='tag: '+imgtag) \
         .set_image(url=hentaiimg) \
@@ -85,45 +114,56 @@ class anime():
         await self.bot.say(embed=embed)
 
     @commands.command(pass_context=True)
-    @commands.cooldown(1, 15, type=commands.BucketType.channel)
+    @commands.cooldown(1, 20, type=commands.BucketType.user)
     async def hentaibomb(self, ctx, *, imgtag):
         """No."""
         
+        params = {'tags' : imgtag + ' rating:explicit', 'limit' : 10, 'random' : 'true'}
         await self.bot.add_reaction(ctx.message, '\U0001F44C')
 
-        for i in range(random.randint(3, 9)):
-            try:
-                images = self.danbooru.post_list(tags=imgtag + ' rating:explicit', limit=10, random=True, page=random.randint(1,11))
-            except PybooruHTTPError:
-                await self.bot.say('Danbooru has a limitation on tags. Please use only one tag.')
-                return
-                
-            if len(images) == 0:
-                images = self.danbooru.post_list(tags=imgtag + ' rating:explicit', limit=9, random=True, page=1)
-                if len(images) == 0:
-                    await self.bot.say('No images found for ``{}``. Try another tag?'.format(imgtag))
-                    return
+        try:
+            images = await self.fetchlist('danbooru', params)
+        except SystemError:
+            await self.bot.send_message(ctx.message.channel, '``An internal error has occurred.``')
+            return
+
+        try:
+            images[0]
+        except:
+            await self.bot.say('Danbooru has a limitation on tags. Please use only one tag.')
+            return
+
+        if len(images) == 0:
+            await self.bot.say('No images found for ``{}``. Try another tag?'.format(imgtag))
+            return
+
+        iterations = (10 - random.randint(3, 9))
+        del images[-iterations:]
+
+        for i in images:
             try:
                 img = random.choice(images)
-                himg = ("http://danbooru.donmai.us{0}".format(img['file_url']))
-            except KeyError:
+                himg = ("http://danbooru.donmai.us{0}".format(i['file_url']))
+            except:
                 continue
                                
             embed = discord.Embed(title='tag: ' + imgtag) \
             .set_image(url=himg) \
             .set_footer(text='https://danbooru.donmai.us', icon_url='http://i.imgur.com/4Wjm9rb.png')
             await self.bot.send_message(ctx.message.author, embed=embed)
-        await self.bot.send_message(ctx.message.channel, 'Check your inbox for some fresh hentai, '+ ctx.message.author.mention + '.')
+            
+        await self.bot.say('Check your inbox for some fresh hentai, '+ ctx.message.author.mention + '.')
 
     @commands.command(pass_context=True)
-    @commands.cooldown(5, 3, type=commands.BucketType.channel)
+    @commands.cooldown(3, 3, type=commands.BucketType.channel)
     async def thighhighs(self, ctx):
         """OH YEAH, THIGHHIGHS!"""
+
+        params = {'tags' : 'thighhighs rating:safe', 'limit' : 5, 'random' : 'true'}
         
-        imagelist = self.danbooru.post_list(tags='thighhighs rating:safe', limit=5, random=True)
-            
+        imagelist = await self.fetchlist('danbooru', params)
         img = random.choice(imagelist)
-        animeimg = ("http://danbooru.donmai.us{}".format(img['file_url']))
+        animeimg = ("https://danbooru.donmai.us{}".format(img['file_url']))
             
         embed = discord.Embed(title='thighhighs') \
         .set_image(url=animeimg) \
@@ -131,48 +171,51 @@ class anime():
         await self.bot.say(embed=embed)
 
     @commands.command(pass_context=True)
-    @commands.cooldown(5, 3, type=commands.BucketType.channel)
+    @commands.cooldown(3, 3, type=commands.BucketType.channel)
     async def catgirl(self, ctx):
         """The best things in the universe."""
 
+        params = {'tags' : 'cat_girl rating:safe', 'limit' : 5, 'random' : 'true'}
         catgirlmessage= ['KITTY!', 'nyaa~', 'here\'s your fucking 2d catgirl', 'catgirl', 'nekomimi', 'stop looking for catgirls weeb']
-
-        imagelist = self.danbooru.post_list(tags='cat_girl rating:safe', limit=5, random=True, page=random.randint(1, 30))
-            
+        
+        imagelist = await self.fetchlist('danbooru', params)
         img = random.choice(imagelist)
-        animeimg = ("http://danbooru.donmai.us{}".format(img['file_url']))
+        animeimg = ("https://danbooru.donmai.us{}".format(img['file_url']))
             
         embed = discord.Embed(title=random.choice(catgirlmessage)) \
         .set_image(url=animeimg) \
         .set_footer(text='https://danbooru.donmai.us', icon_url='http://i.imgur.com/4Wjm9rb.png')
         await self.bot.say(embed=embed)
     @commands.command(pass_context=True)
-    @commands.cooldown(5, 3, type=commands.BucketType.channel)
+    @commands.cooldown(3, 3, type=commands.BucketType.channel)
     async def thicc(self, ctx):
-        """The best things in the universe."""
+        """T H I C C bitches"""
 
-        thicc = self.moebooru.post_list(tags='cleavage ass rating:safe order:score', limit=4, page=(random.randint(1, 35)))
+        params = {'tags' : 'curvy rating:safe', 'limit' : 5, 'random' : 'true'}
 
-        img = random.choice(thicc)
-        thiccimg = ("{0}".format(img['file_url']))
+        imagelist = await self.fetchlist('danbooru', params)
+        img = random.choice(imagelist)
+        thiccimg = ("https://danbooru.donmai.us{}".format(img['file_url']))
             
         thiccembed = discord.Embed(title='T H I C C') \
         .set_image(url=thiccimg) \
-        .set_footer(text='https://yande.re', icon_url='http://i.imgur.com/jemLswy.png')
+        .set_footer(text='https://danbooru.donmai.us', icon_url='http://i.imgur.com/4Wjm9rb.png')
         await self.bot.say(embed=thiccembed)
 
     @commands.command(pass_context=True)
-    @commands.cooldown(5, 5, type=commands.BucketType.channel)
+    @commands.cooldown(2, 5, type=commands.BucketType.channel)
     async def weebsearch(self, ctx, *, imgtags):
         """A command to search for stuff on the yande.re imageboard."""
-
+        
         if 'nsfw' not in ctx.message.channel.name:
             imgtags = imgtags.replace(' rating:explicit', '').replace(' rating:questionable', '')
             imgtags = (imgtags + ' rating:safe')
-
-        images = self.moebooru.post_list(tags=imgtags, limit=8, page=(random.randint(1, 15)))
+            
+        params = {'tags' : imgtags, 'limit' : 10, 'page' : random.randint(1, 12)}
+        images = await self.fetchlist('yandere', params)
         if len(images) == 0:
-            images = self.moebooru.post_list(tags=imgtags, limit=8, page=1)
+            params = {'tags' : imgtags, 'limit' : 10, 'page' : '1'}
+            images = await self.fetchlist('yandere', params)
             if len(images) == 0:
                 await self.bot.say('No images found for the tags: ``{}``. Try some other tags?'.format(imgtags))
                 return
@@ -186,7 +229,7 @@ class anime():
 
 
     @commands.command(pass_context=True)
-    @commands.cooldown(1, 6, type=commands.BucketType.channel)
+    @commands.cooldown(2, 6, type=commands.BucketType.channel)
     async def gelbooru(self, ctx, *, imgtags):
         """A command to search for stuff on the Gelbooru imageboard."""
 
@@ -194,19 +237,16 @@ class anime():
             imgtags = imgtags.replace(' rating:explicit', '').replace(' rating:questionable', '')
             imgtags = (imgtags + ' rating:safe')
 
-        params = {'tags' : imgtags, 'limit' : 25, 'pid' : (random.randint(1, 10))}
         try:
-            async with aiohttp.ClientSession() as session:
-                async with session.get('https://gelbooru.com/index.php?page=dapi&s=post&q=index&json=1', params=params) as resp:
-                    images = await resp.json()
+            params = {'tags' : imgtags, 'limit' : 25, 'pid' : (random.randint(1, 10))}
+            images = await self.fetchlist('gelbooru', params)  
             if len(images) == 0:
                 raise ValueError('No images found.')
         except:
             try:
                 params = {'tags' : imgtags, 'limit' : 30}
-                async with aiohttp.ClientSession() as session:
-                    async with session.get('https://gelbooru.com/index.php?page=dapi&s=post&q=index&json=1', params=params) as resp:
-                        images = await resp.json()
+                images = await self.fetchlist('gelbooru', params)  
+                        
                 if len(images) == 0:
                     raise ValueError('No images found.')
             except:
