@@ -127,14 +127,14 @@ class anime():
             await self.bot.send_message(ctx.message.channel, '``An internal error has occurred.``')
             return
 
+        if len(images) == 0:
+            await self.bot.say('No images found for ``{}``. Try another tag?'.format(imgtag))
+            return
+        
         try:
             images[0]
         except:
             await self.bot.say('Danbooru has a limitation on tags. Please use only one tag.')
-            return
-
-        if len(images) == 0:
-            await self.bot.say('No images found for ``{}``. Try another tag?'.format(imgtag))
             return
 
         iterations = (10 - random.randint(3, 9))
