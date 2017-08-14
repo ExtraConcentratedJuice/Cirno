@@ -6,6 +6,9 @@ import sqlite3
 
 logging.basicConfig(level=logging.INFO)
 
+with open("config.yaml", 'r') as f:
+    config = yaml.load(f)
+
 main_cmd = ['cmds.botcontrol', 'cmds.anime', 'cmds.general', 'cmds.misc', 'cmds.games', 'cmds.moderation']
 
 bot = commands.Bot(command_prefix=config['prefix'], description='Robo-Fuhrer but it\'s rewritten to be slightly less horrible')
@@ -13,7 +16,7 @@ bot = commands.Bot(command_prefix=config['prefix'], description='Robo-Fuhrer but
 @bot.event
 async def on_command_error(error, ctx):
     if isinstance(error, commands.MissingRequiredArgument):
-        await bot.send_message(ctx.message.channel, '``Error | Missing argument(s).``')
+        await bot.send_message(ctx.message.channel, '``Error | Missing argument(s). Please refer to !help for usage.``')
     elif isinstance(error, commands.CommandOnCooldown):
         await bot.send_message(ctx.message.channel, '``Error | You\'ve used this command way too fast, try again in {} seconds.``'.format(round(error.retry_after, 2)))
     elif isinstance(error, commands.BadArgument):
@@ -64,9 +67,6 @@ async def on_ready():
     c.execute('CREATE TABLE IF NOT EXISTS data(href TEXT PRIMARY KEY, data_title TEXT, data_alt TEXT, time REAL)')
     db.commit()
     db.close()
-
-with open("config.yaml", 'r') as f:
-    config = yaml.load(f)
 
 for module in main_cmd:
     try:
