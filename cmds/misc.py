@@ -37,6 +37,38 @@ class misc():
         rbservers.append('```')
         await self.bot.say('\n'.join(rbservers))
 
+    @commands.command(pass_context=True)
+    async def server(self, ctx):
+        "Server info command"""
+        
+        embed = discord.Embed(color = 0x870c0f, title = ctx.message.server.name) \
+                      .set_thumbnail(url= (ctx.message.server.icon_url).replace('jpg', 'png')) \
+                      .add_field(name = 'Owner', value = str(ctx.message.server.owner), inline = False) \
+                      .add_field(name = 'Created', value = str(ctx.message.server.created_at), inline = False) \
+                      .add_field(name = 'Members', value = str(ctx.message.server.member_count), inline = False) \
+                      .add_field(name = 'ID', value = str(ctx.message.server.id), inline = False) \
+                      .add_field(name = 'Region', value = str(ctx.message.server.region), inline = False)
+
+        await self.bot.say(embed=embed)
+
+    @commands.command(pass_context=True)
+    async def user(self, ctx):
+        "User info command"""
+
+        if len(ctx.message.mentions) != 1:
+            await client.send_message(message.channel, 'You need to mention ``1`` user to retrieve info from.')
+            return
+
+        usrinf = ctx.message.mentions[0]
+        
+        embed = discord.Embed(color = 0x870c0f, title = usrinf.name + str(usrinf.discriminator)) \
+                      .set_thumbnail(url= (usrinf.avatar_url).replace('jpg', 'png')) \
+                      .add_field(name = 'Nickname', value = str(usrinf.display_name), inline = False) \
+                      .add_field(name = 'Joined', value = str(usrinf.created_at), inline = False) \
+                      .add_field(name = 'ID', value = str(usrinf.id), inline = False) \
+
+        await self.bot.say(embed=embed)
+
 
 def setup(bot):
     bot.add_cog(misc(bot))
