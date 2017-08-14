@@ -70,7 +70,7 @@ class misc():
         await self.bot.say(embed=embed)
 
     @commands.command(pass_context=True)
-    async def reportissue(self, ctx, issue):
+    async def reportissue(self, ctx, *, issue):
         embed = discord.Embed(description=issue) \
         .set_author(name=ctx.message.author.name, icon_url=ctx.message.author.avatar_url) \
         .add_field(name='Server: ', value=ctx.message.server.name)

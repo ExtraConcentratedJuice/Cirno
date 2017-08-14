@@ -7,8 +7,8 @@ class moderation():
     def __init__(self, bot):
         self.bot = bot
 
-    @commands,command(pass_context=True)
-    @commands.cooldown(1, 4, type=commands.BucketType,channel)
+    @commands.command(pass_context=True)
+    @commands.cooldown(1, 4, type=commands.BucketType.channel)
     async def purge(self, ctx, number):
         """Purges messages from a chat channel."""
         
