@@ -56,7 +56,7 @@ class misc():
         "User info command"""
 
         if len(ctx.message.mentions) != 1:
-            await client.send_message(message.channel, 'You need to mention ``1`` user to retrieve info from.')
+            await self.bot.say('You need to mention ``1`` user to retrieve info from.')
             return
 
         usrinf = ctx.message.mentions[0]
