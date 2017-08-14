@@ -78,6 +78,12 @@ class misc():
         await self.bot.send_message(self.bot.get_channel('338421643879645186'), embed=embed)
         await self.bot.add_reaction(ctx.message, '\U0001F44C')
 
+    @commands.command(pass_context=True)
+    async def invite(self, ctx):
+        """Invite link"""
+        
+        await self.bot.say('https://discordapp.com/oauth2/authorize?client_id=338414455291510785&scope=bot&permissions=201850055')
+
 
 def setup(bot):
     bot.add_cog(misc(bot))
