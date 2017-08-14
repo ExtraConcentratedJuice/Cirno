@@ -6,9 +6,9 @@ import sqlite3
 
 logging.basicConfig(level=logging.INFO)
 
-main_cmd = ['cmds.botcontrol', 'cmds.anime', 'cmds.general', 'cmds.misc', 'cmds.games']
+main_cmd = ['cmds.botcontrol', 'cmds.anime', 'cmds.general', 'cmds.misc', 'cmds.games', 'cmds.moderation']
 
-bot = commands.Bot(command_prefix ='!', description='Robo-Fuhrer but it\'s rewritten to be slightly less horrible')
+bot = commands.Bot(command_prefix=config['prefix'], description='Robo-Fuhrer but it\'s rewritten to be slightly less horrible')
 
 @bot.event
 async def on_command_error(error, ctx):

@@ -41,13 +41,13 @@ class misc():
     async def server(self, ctx):
         "Server info command"""
         
-        embed = discord.Embed(color = 0x870c0f, title = ctx.message.server.name) \
-                      .set_thumbnail(url= (ctx.message.server.icon_url).replace('jpg', 'png')) \
-                      .add_field(name = 'Owner', value = str(ctx.message.server.owner), inline = False) \
-                      .add_field(name = 'Created', value = str(ctx.message.server.created_at), inline = False) \
-                      .add_field(name = 'Members', value = str(ctx.message.server.member_count), inline = False) \
-                      .add_field(name = 'ID', value = str(ctx.message.server.id), inline = False) \
-                      .add_field(name = 'Region', value = str(ctx.message.server.region), inline = False)
+        embed = discord.Embed(color=0x870c0f, title=ctx.message.server.name) \
+        .set_thumbnail(url=(ctx.message.server.icon_url).replace('jpg', 'png')) \
+        .add_field(name='Owner', value=str(ctx.message.server.owner), inline=False) \
+        .add_field(name='Created', value=str(ctx.message.server.created_at), inline=False) \
+        .add_field(name='Members', value=str(ctx.message.server.member_count), inline=False) \
+        .add_field(name='ID', value=str(ctx.message.server.id), inline=False) \
+        .add_field(name='Region', value=str(ctx.message.server.region), inline=False)
 
         await self.bot.say(embed=embed)
 
@@ -61,13 +61,22 @@ class misc():
 
         usrinf = ctx.message.mentions[0]
         
-        embed = discord.Embed(color = 0x870c0f, title = usrinf.name + str(usrinf.discriminator)) \
-                      .set_thumbnail(url= (usrinf.avatar_url).replace('jpg', 'png')) \
-                      .add_field(name = 'Nickname', value = str(usrinf.display_name), inline = False) \
-                      .add_field(name = 'Joined', value = str(usrinf.created_at), inline = False) \
-                      .add_field(name = 'ID', value = str(usrinf.id), inline = False) \
+        embed = discord.Embed(color=0x870c0f, title=usrinf.name + '#' + str(usrinf.discriminator)) \
+        .set_thumbnail(url=(usrinf.avatar_url).replace('jpg', 'png')) \
+        .add_field(name='Nickname', value=str(usrinf.display_name), inline=False) \
+        .add_field(name='Joined', value=str(usrinf.created_at), inline=False) \
+        .add_field(name='ID', value=str(usrinf.id), inline=False) \
 
         await self.bot.say(embed=embed)
+
+    @commands.command(pass_context=True)
+    async def reportissue(self, ctx, issue):
+        embed = discord.Embed(description=issue) \
+        .set_author(name=ctx.message.author.name, icon_url=ctx.message.author.avatar_url) \
+        .add_field(name='Server: ', value=ctx.message.server.name)
+        
+        await self.bot.send_message(self.bot.get_channel('338421643879645186'), embed=embed)
+        await self.bot.add_reaction(ctx.message, '\U0001F44C')
 
 
 def setup(bot):

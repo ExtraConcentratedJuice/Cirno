@@ -18,10 +18,11 @@ class general():
         self.bot.remove_command('help')
 
     @commands.command(pass_context=True)
-    @commands.cooldown(1, 15, type=commands.BucketType.channel)
+    @commands.cooldown(1, 20, type=commands.BucketType.user)
     async def help(self,ctx):
         """Help command"""
         await self.bot.add_reaction(ctx.message, '\U0001F44C')
+        #lol i need to fix the spacing
         embedhelp = discord.Embed(color = 0x870c0f, description = 'I am a gay multi-purpose Discord bot created by ExtraConcentratedJuice. Multi-purpose may be an overstatement though, because I am completely useless. Extra is absolutely terrible at code, so expect me to be mildly retarded at times.\n\nAll commands have a 3.5 second cooldown.\n\nCertain commands have been omitted from this manual due to their potential for abuse or their completely inane nature.') \
                     .set_author(name = '𝔗𝔥𝔢 𝔒𝔣𝔣𝔦𝔠𝔦𝔞𝔩 ℜ𝔬𝔟𝔬-𝔉ü𝔥𝔯𝔢𝔯 𝔐𝔞𝔫𝔲𝔞𝔩', url = 'https://harpy.cf', icon_url = self.bot.user.avatar_url) \
                     .set_thumbnail(url = 'https://i.imgur.com/qHytgB2.png') \
@@ -36,7 +37,6 @@ class general():
                     .add_field(name = "``!coin``", value = 'Flips a coin, complete with image of a coin.', inline = False) \
                     .add_field(name = "``!kms``", value = 'Six different ways to express your loss of the will to live.', inline = False) \
                     .add_field(name = "``!roboinfo``", value = 'Gives you some information regarding this bot.', inline = False) \
-                    .add_field(name = "``!gibsauce``", value = 'Gives you Robo-Fuhrer\'s mess of a source code.', inline = False) \
                     .add_field(name ='__**Game Stuff**__', value = 'Stuff related to gaem\n', inline = False) \
                     .add_field(name = "``!stats (SteamID64 or Vanity URL)``", value = 'Gives you Unturned stats.', inline = False) \
                     .add_field(name = "``!steamid (Vanity URL)``", value = 'Converts a Vanity URL to SteamID64.', inline = False) \
@@ -50,7 +50,26 @@ class general():
                     .add_field(name = "``!weebsearch (tag1 tag2 character_name)``", value = 'Weeaboo image search. Separate tags by spaces. Spaces in character names represented by an underscore.', inline = False) \
                     .add_field(name = "``!gelbooru (tag1 character_name)``", value = 'Same as !weebsearch, just on Gelbooru.', inline = False) \
                     .set_footer(text = 'Robo-Führer, by ExtraConcentratedJuice', icon_url = 'https://i.imgur.com/ItO8dUz.png')
-        await self.bot.say(embed=embedhelp)
+        embedhelp2 = discord.Embed(color = 0x870c0f, description = 'Page two of the offical Robo-Führer manual.') \
+                    .set_author(name = '𝔗𝔥𝔢 𝔒𝔣𝔣𝔦𝔠𝔦𝔞𝔩 ℜ𝔬𝔟𝔬-𝔉ü𝔥𝔯𝔢𝔯 𝔐𝔞𝔫𝔲𝔞𝔩, pg2', url = 'https://harpy.cf', icon_url = self.bot.user.avatar_url) \
+                    .set_thumbnail(url = 'https://i.imgur.com/qHytgB2.png') \
+                    .add_field(name = "__**IMPORTANT**__", value = 'If you wish to enable the Führer\'s moderator log, create a channel named ``rf-logs`` and give RF permissions to write, read, and embed.', inline = False) \
+                    .add_field(name = "__**Moderation**__", value = 'Administrative commands. You MUST be in a role named ``rf-moderator`` for the commands to work.', inline = False) \
+                    .add_field(name = "``r%purge (# of msgs)``", value = 'Purges the specified number of messages from the channel.', inline = False) \
+                    .add_field(name = "``r%softban (@user) (reason)``", value = 'Kicks a user and removes all their messages.', inline = False) \
+                    .add_field(name = "``r%kick (@user) (reason)``", value = 'Kicks a user from the server.', inline = False) \
+                    .add_field(name = "``r%ban (@user) (reason)``", value = 'Bans a user from the server.', inline = False) \
+                    .add_field(name = "__**Misc.**__", value = 'All the other stuff.', inline = False) \
+                    .add_field(name = "``!gibsauce``", value = 'Gives you Robo-Fuhrer\'s mess of a source code.', inline = False) \
+                    .add_field(name = "``r%invite``", value = 'Invite my useless ass to your server! You can have your VERY OWN Robo-Führer.', inline = False) \
+                    .add_field(name = "``r%server``", value = 'Gives information about the server that this command was run in.', inline = False) \
+                    .add_field(name = "``r%user (@user)``", value = 'Gives information about a mentioned user.', inline = False) \
+                    .add_field(name = "``r%reportissue (issue)``", value = 'Reports an issue. Suggestions are also welcome. If you misuse this command, you will be niggered.', inline = False) \
+                    .set_footer(text= "Robo-Führer, by ExtraConcentratedJuice", icon_url = 'https://i.imgur.com/ItO8dUz.png')
+
+        await self.bot.send_message(ctx.message.author, 'Hey, here\'s that help that you wanted.')
+        await self.bot.send_message(ctx.message.author, embed=embedhelp)
+        await self.bot.send_message(ctx.message.author, embed=embedhelp2)
         
     
 
@@ -92,11 +111,12 @@ class general():
         await self.bot.say('Roll: ``{}`` + ``{}``'.format(random.randint(1, 6), random.randint(1, 6)))
 
     @commands.command(pass_context=True)
-    @commands.cooldown(1, 13, type=commands.BucketType.channel)
+    @commands.cooldown(1, 29, type=commands.BucketType.channel)
     async def commonwords(self, ctx, channel, days : int, words : int):
         """Generates a list of common words in a channel."""
         
         channel = re.sub('[^0-9]', '', channel)
+        
         if days > 7:
             await self.bot.say('You can only do up to a week\'s worth of messages.')
             return
@@ -105,16 +125,12 @@ class general():
             return
         
         await self.bot.say('``Gathering information...``')
-
         timestart = time.time()
-        
         dateafter = datetime.now() - timedelta(days=int(days))
-
         wordlist = []
-
         chan = self.bot.get_channel(channel)
         
-        async for message in self.bot.logs_from(chan, limit=12000, after=dateafter):
+        async for message in self.bot.logs_from(chan, limit=20000, after=dateafter):
             if message.author.bot:
                 continue
             if message.author == self.bot.user:
@@ -123,22 +139,16 @@ class general():
             wordlist.append(str(cleanmsg))
 
         wordlist = ''.join(wordlist)
-            
         worddata = re.findall(r'\w+', wordlist)
-
         worddata = [word for word in worddata if len(word) > 3]
-
         worddata = [word.lower() for word in worddata]
-
         wordcount = Counter(worddata)
-
         countmsg = []
 
         for k, v in wordcount.most_common(words):
             countmsg.append('"' + k + '"' + ', ' + str(v) + ' times.')
 
         timeend = (time.time() - timestart)
-
         msg = '```Words processed in ' + str(round(timeend, 2)) + ' seconds.\n\n' + 'List of top ' + str(words) + ' commonly used words in #' + chan.name + ' in the past ' + str(days * 24) + ' hours:\n\n' + '\n'.join(countmsg)+ '```'
 
         try:
@@ -149,10 +159,12 @@ class general():
     @commands.command(pass_context=True)
     async def russianroulette(self, ctx):
         """Russian Roulette."""
+        
         bullet = random.randint(1, 6)
         await self.bot.say(':gun: The chambers have been spun.')
         await asyncio.sleep(1.5)
         pulltrig = 'You pull the trigger, and...\n'
+        
         if bullet == 1:
             await self.bot.say(pulltrig + ':tada: BANG!\nA bullet went straight into your head. lol')
         else:
@@ -161,11 +173,14 @@ class general():
     @commands.command(pass_context=True)
     async def gasjews(self, ctx):
         """Gas chamber meme"""
+        
         gasjews = ['http://i.magaimg.net/img/qsx.png', 'http://i.magaimg.net/img/q13.gif', 'http://i.magaimg.net/img/q14.png', 'http://i.magaimg.net/img/q5c.jpg']
         self.bot.say(random.choice(gasjews))
 
     @commands.command(pass_context=True)
     async def cat(self, ctx):
+        """Sends a cat from that shitty cat API"""
+        
         kitty = requests.get('http://random.cat/meow')
         cat = kitty.json()
         catlink = (cat['file'])
@@ -174,6 +189,8 @@ class general():
 
     @commands.command(pass_context=True)
     async def gibsauce(self, ctx):
+        """Source code of bot"""
+        
         await self.bot.say('https://github.com/ExtraConcentratedJuice/robo-fuhrer')
         
 
