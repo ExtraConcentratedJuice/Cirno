@@ -122,7 +122,15 @@ class botcontrol():
         except Exception as e:
             await self.bot.say('Module failed to unload. | ' + str(e))
         else:
-            await self.bot.say('Module successfully unloaded. | ' + module) 
+            await self.bot.say('Module successfully unloaded. | ' + module)
+
+    @commands.command(pass_context=True)
+    async def changestatus(self, ctx, *, status):
+        """Change bot status"""
+        
+        if ctx.message.author.id != self.owner:
+            return
+        await self.bot.change_presence(game=discord.Game(name=status, url="https://twitch.tv/meme", type=1))
 
 def setup(bot):
     bot.add_cog(botcontrol(bot))

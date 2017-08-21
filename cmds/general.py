@@ -5,6 +5,7 @@ import time
 import os
 import requests
 import json
+import aiohttp
 import time
 from datetime import datetime, timedelta
 import random
@@ -192,6 +193,27 @@ class general():
         """Source code of bot"""
         
         await self.bot.say('https://github.com/ExtraConcentratedJuice/robo-fuhrer')
+
+    @commands.command(pass_context=True)
+    async def WEEB(self):
+        """WEEBcoin stats"""
+
+        params = {'q' : 'mining'}
+        
+        async with aiohttp.ClientSession() as session:
+            async with session.get('http://159.203.169.234/api.php', params=params) as resp:
+                data = await resp.json()
+
+        embed = discord.Embed(title='Weebcoin') \
+                .set_footer(text='data is from kohai\'s gay api') \
+                .set_image(url='http://i.magaimg.net/img/181l.jpg') \
+                .add_field(name='Blocks', value=data['blocks'], inline=False) \
+                .add_field(name='Current Block Size', value=data['currentblocksize'], inline=False) \
+                .add_field(name='Current Block Difficulty', value=data['difficulty'], inline=False) \
+                .add_field(name='Network Hashes / Second', value=data['networkhashps'], inline=False) \
+                .add_field(name='Value', value='Zero (0) USD', inline=False)
+
+        await self.bot.say(embed=embed)
         
 
 def setup(bot):
