@@ -12,6 +12,7 @@ import random
 import re
 import asyncio
 from collections import Counter
+import yaml
 
 async def GET(url, params={}):
     try:
@@ -22,6 +23,11 @@ async def GET(url, params={}):
         return None
     
     return data
+
+with open("config.yaml", 'r') as f:
+    config = yaml.load(f)
+
+pr = config['prefix']
     
 class general():
     
@@ -39,45 +45,44 @@ class general():
                     .set_author(name = '𝔗𝔥𝔢 𝔒𝔣𝔣𝔦𝔠𝔦𝔞𝔩 ℜ𝔬𝔟𝔬-𝔉ü𝔥𝔯𝔢𝔯 𝔐𝔞𝔫𝔲𝔞𝔩', url = 'https://harpy.cf', icon_url = self.bot.user.avatar_url) \
                     .set_thumbnail(url = 'https://i.imgur.com/qHytgB2.png') \
                     .add_field(name = "__**General Purpose**__", value = 'The usual commands. Satisfaction not guaranteed.', inline = False) \
-                    .add_field(name = "``!rbhello``", value = 'Useless command that will work 100% of the time to check if the bot is alive.', inline = False) \
-                    .add_field(name = "``!commonwords (#channel) (days) (number of words)``", value = 'Gives you a list of commonly used words in a channel, according to your parameters.', inline = False) \
-                    .add_field(name = "``!robomusic``", value = 'Gives you MUSIC commands.', inline = False) \
-                    .add_field(name = "``!reddit (subreddit, e.g. The_Donald)``", value = 'Grabs a post from the front page of the specified subreddit.', inline = False) \
-                    .add_field(name = "``!gasjews``", value = 'Gas chamber meme.', inline = False) \
-                    .add_field(name = "``!russianroulette``", value = 'Shoot yourself.', inline = False) \
-                    .add_field(name = "``!dice``", value = 'Rolls a dice.', inline = False) \
-                    .add_field(name = "``!doubledice``", value = 'Rolls TWO dice.', inline = False) \
-                    .add_field(name = "``!coin``", value = 'Flips a coin, complete with image of a coin.', inline = False) \
-                    .add_field(name = "``!kms``", value = 'Six different ways to express your loss of the will to live.', inline = False) \
-                    .add_field(name = "``!roboinfo``", value = 'Gives you some information regarding this bot.', inline = False) \
+                    .add_field(name = pr + "``rbhello``", value = 'Useless command that will work 100% of the time to check if the bot is alive.', inline = False) \
+                    .add_field(name = pr + "``commonwords (#channel) (days) (number of words)``", value = 'Gives you a list of commonly used words in a channel, according to your parameters.', inline = False) \
+                    .add_field(name = pr + "``reddit (subreddit, e.g. The_Donald)``", value = 'Grabs a post from the front page of the specified subreddit.', inline = False) \
+                    .add_field(name = pr + "``gasjews``", value = 'Gas chamber meme.', inline = False) \
+                    .add_field(name = pr + "``russianroulette``", value = 'Shoot yourself.', inline = False) \
+                    .add_field(name = pr + "``dice``", value = 'Rolls a dice.', inline = False) \
+                    .add_field(name = pr + "``doubledice``", value = 'Rolls TWO dice.', inline = False) \
+                    .add_field(name = pr + "``coin``", value = 'Flips a coin, complete with image of a coin.', inline = False) \
+                    .add_field(name = pr + "``kms``", value = 'Six different ways to express your loss of the will to live.', inline = False) \
+                    .add_field(name = pr + "``roboinfo``", value = 'Gives you some information regarding this bot.', inline = False) \
                     .add_field(name ='__**Game Stuff**__', value = 'Stuff related to gaem\n', inline = False) \
-                    .add_field(name = "``!stats (SteamID64 or Vanity URL)``", value = 'Gives you Unturned stats.', inline = False) \
-                    .add_field(name = "``!steamid (Vanity URL)``", value = 'Converts a Vanity URL to SteamID64.', inline = False) \
+                    .add_field(name = pr + "``stats (SteamID64 or Vanity URL)``", value = 'Gives you Unturned stats.', inline = False) \
+                    .add_field(name = pr + "``steamid (Vanity URL)``", value = 'Converts a Vanity URL to SteamID64.', inline = False) \
                     .add_field(name ='__**Weeb Shit**__', value = 'Gay weeb commands. Why I even waste my time on this crap?\n', inline = False) \
-                    .add_field(name = '``!animestream (name)``', value = 'Gives you an anime stream from twist.moe.', inline = False) \
-                    .add_field(name = "``!animeimg (tag)``", value = 'Gives you an anime image with your tag.', inline = False) \
-                    .add_field(name = "``!animeinfo (name)``", value = 'Gives you information about an anime.', inline = False) \
-                    .add_field(name = "``!catgirl``", value = 'Gives you a catgirl.', inline = False) \
-                    .add_field(name = "``!thicc``", value = 'T H I C C', inline = False) \
-                    .add_field(name = "``!thighhighs``", value = 'Gives you thighhighs.', inline = False) \
-                    .add_field(name = "``!weebsearch (tag1 tag2 character_name)``", value = 'Weeaboo image search. Separate tags by spaces. Spaces in character names represented by an underscore.', inline = False) \
-                    .add_field(name = "``!gelbooru (tag1 character_name)``", value = 'Same as !weebsearch, just on Gelbooru.', inline = False) \
+                    .add_field(name = pr + '``animestream (name)``', value = 'Gives you an anime stream from twist.moe.', inline = False) \
+                    .add_field(name = pr + "``animeimg (tag)``", value = 'Gives you an anime image with your tag.', inline = False) \
+                    .add_field(name = pr + "``animeinfo (name)``", value = 'Gives you information about an anime.', inline = False) \
+                    .add_field(name = pr + "``catgirl``", value = 'Gives you a catgirl.', inline = False) \
+                    .add_field(name = pr + "``thicc``", value = 'T H I C C', inline = False) \
+                    .add_field(name = pr + "``thighhighs``", value = 'Gives you thighhighs.', inline = False) \
+                    .add_field(name = pr + "``weebsearch (tag1 tag2 character_name)``", value = 'Weeaboo image search. Separate tags by spaces. Spaces in character names represented by an underscore.', inline = False) \
+                    .add_field(name = pr + "``gelbooru (tag1 character_name)``", value = 'Same as weebsearch, just on Gelbooru.', inline = False) \
                     .set_footer(text = 'Robo-Führer, by ExtraConcentratedJuice', icon_url = 'https://i.imgur.com/ItO8dUz.png')
         embedhelp2 = discord.Embed(color = 0x870c0f, description = 'Page two of the offical Robo-Führer manual.') \
                     .set_author(name = '𝔗𝔥𝔢 𝔒𝔣𝔣𝔦𝔠𝔦𝔞𝔩 ℜ𝔬𝔟𝔬-𝔉ü𝔥𝔯𝔢𝔯 𝔐𝔞𝔫𝔲𝔞𝔩, pg2', url = 'https://harpy.cf', icon_url = self.bot.user.avatar_url) \
                     .set_thumbnail(url = 'https://i.imgur.com/qHytgB2.png') \
                     .add_field(name = "__**IMPORTANT**__", value = 'If you wish to enable the Führer\'s moderator log, create a channel named ``rf-logs`` and give RF permissions to write, read, and embed.', inline = False) \
                     .add_field(name = "__**Moderation**__", value = 'Administrative commands. You MUST be in a role named ``rf-moderator`` for the commands to work.', inline = False) \
-                    .add_field(name = "``r%purge (# of msgs)``", value = 'Purges the specified number of messages from the channel.', inline = False) \
-                    .add_field(name = "``r%softban (@user) (reason)``", value = 'Kicks a user and removes all their messages.', inline = False) \
-                    .add_field(name = "``r%kick (@user) (reason)``", value = 'Kicks a user from the server.', inline = False) \
-                    .add_field(name = "``r%ban (@user) (reason)``", value = 'Bans a user from the server.', inline = False) \
+                    .add_field(name = pr + "``purge (# of msgs)``", value = 'Purges the specified number of messages from the channel.', inline = False) \
+                    .add_field(name = pr + "``softban (@user) (reason)``", value = 'Kicks a user and removes all their messages.', inline = False) \
+                    .add_field(name = pr + "``kick (@user) (reason)``", value = 'Kicks a user from the server.', inline = False) \
+                    .add_field(name = pr + "``ban (@user) (reason)``", value = 'Bans a user from the server.', inline = False) \
                     .add_field(name = "__**Misc.**__", value = 'All the other stuff.', inline = False) \
-                    .add_field(name = "``!gibsauce``", value = 'Gives you Robo-Fuhrer\'s mess of a source code.', inline = False) \
-                    .add_field(name = "``r%invite``", value = 'Invite my useless ass to your server! You can have your VERY OWN Robo-Führer.', inline = False) \
-                    .add_field(name = "``r%server``", value = 'Gives information about the server that this command was run in.', inline = False) \
-                    .add_field(name = "``r%user (@user)``", value = 'Gives information about a mentioned user.', inline = False) \
-                    .add_field(name = "``r%reportissue (issue)``", value = 'Reports an issue. Suggestions are also welcome. If you misuse this command, you will be niggered.', inline = False) \
+                    .add_field(name = pr + "``gibsauce``", value = 'Gives you Robo-Fuhrer\'s mess of a source code.', inline = False) \
+                    .add_field(name = pr + "``invite``", value = 'Invite my useless ass to your server! You can have your VERY OWN Robo-Führer.', inline = False) \
+                    .add_field(name = pr + "``server``", value = 'Gives information about the server that this command was run in.', inline = False) \
+                    .add_field(name = pr + "``user (@user)``", value = 'Gives information about a mentioned user.', inline = False) \
+                    .add_field(name = pr + "``reportissue (issue)``", value = 'Reports an issue. Suggestions are also welcome. If you misuse this command, you will be niggered.', inline = False) \
                     .set_footer(text= "Robo-Führer, by ExtraConcentratedJuice", icon_url = 'https://i.imgur.com/ItO8dUz.png')
 
         await self.bot.send_message(ctx.message.author, 'Hey, here\'s that help that you wanted.')
