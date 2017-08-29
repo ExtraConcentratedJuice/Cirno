@@ -42,6 +42,7 @@ class general():
                     .add_field(name = "``!rbhello``", value = 'Useless command that will work 100% of the time to check if the bot is alive.', inline = False) \
                     .add_field(name = "``!commonwords (#channel) (days) (number of words)``", value = 'Gives you a list of commonly used words in a channel, according to your parameters.', inline = False) \
                     .add_field(name = "``!robomusic``", value = 'Gives you MUSIC commands.', inline = False) \
+                    .add_field(name = "``!reddit (subreddit, e.g. The_Donald)``", value = 'Grabs a post from the front page of the specified subreddit.', inline = False) \
                     .add_field(name = "``!gasjews``", value = 'Gas chamber meme.', inline = False) \
                     .add_field(name = "``!russianroulette``", value = 'Shoot yourself.', inline = False) \
                     .add_field(name = "``!dice``", value = 'Rolls a dice.', inline = False) \
@@ -268,7 +269,7 @@ class general():
         #'len - 2' to account for some extra objects in 'children'
         postlen = len(data['data']['children']) - 2
         objectid = (random.randint(0, postlen))
-        content = data['data']['children'][0]['data']
+        content = data['data']['children'][objectid]['data']
 
         while content['stickied']:
             if len(data['data']['children']) <= 2:
@@ -282,6 +283,9 @@ class general():
         
         if content['thumbnail']:
             embed.set_image(url=content['url'])
+        elif not content['media_embed']:
+            embed = discord.Embed(title=content['title'], url=url, description='\n[' + content['url'] + '](' + content['url'] + ')') \
+            .set_footer(text='{}, retrieved {}'.format(subreddit, time.strftime("%d/%m/%Y")), icon_url='http://i.magaimg.net/img/19y2.png')
             
         try:
             await self.bot.say(embed=embed)
