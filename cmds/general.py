@@ -288,7 +288,7 @@ class general():
         embed = discord.Embed(title=content['title'], url=url, description=content['selftext'] if content['selftext_html'] else None) \
                 .set_footer(text='{}, retrieved {}'.format(subreddit, time.strftime("%d/%m/%Y")), icon_url='http://i.magaimg.net/img/19y2.png')
             
-        if not content['media_embed']:
+        if not content['media_embed'] and not content['is_self']:
             embed = discord.Embed(title=content['title'], url=url, description='\n[' + content['url'] + '](' + content['url'] + ')') \
             .set_footer(text='{}, retrieved {}'.format(subreddit, time.strftime("%d/%m/%Y")), icon_url='http://i.magaimg.net/img/19y2.png')
 
@@ -300,6 +300,8 @@ class general():
         if not reg.search(content['url']):
             try:
                 if content['media']['oembed']:
+                    embed = discord.Embed(title=content['title'], url=url, description='\n[' + content['url'] + '](' + content['url'] + ')') \
+                    .set_footer(text='{}, retrieved {}'.format(subreddit, time.strftime("%d/%m/%Y")), icon_url='http://i.magaimg.net/img/19y2.png')
                     embed.set_image(url=content['media']['oembed']['thumbnail_url'])
                 print('shit lol')
             except:
