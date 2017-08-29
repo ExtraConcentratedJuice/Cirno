@@ -262,6 +262,8 @@ class general():
         if data['data']['over18'] and not is_nsfw:
             await self.bot.say('``/r/{}`` is an NSFW subreddit. Do that shit in an NSFW channel.'.format(subreddit))
 
+        subreddit = data['data']['url']
+
         data = await GET('https://www.reddit.com/r/{}/hot/.json'.format(cleanurl), {'limit' : '25'})
         #'len - 2' to account for some extra objects in 'children'
         postlen = len(data['data']['children']) - 2
@@ -276,7 +278,7 @@ class general():
 
         url = 'https://reddit.com{}'.format(content['permalink'])
         embed = discord.Embed(title=content['title'], url=url, description=content['selftext'] if content['selftext_html'] else None) \
-                .set_footer(text='/r/{}, retrieved {}'.format(subreddit, time.strftime("%d/%m/%Y")), icon_url='http://i.magaimg.net/img/19y2.png')
+                .set_footer(text='{}, retrieved {}'.format(subreddit, time.strftime("%d/%m/%Y")), icon_url='http://i.magaimg.net/img/19y2.png')
         
         if content['thumbnail']:
             embed.set_image(url=content['url'])
@@ -285,7 +287,7 @@ class general():
             await self.bot.say(embed=embed)
         except:
             embed = discord.Embed(title=content['title'], url=url, description='Post content is too long. Please click on the link to view it in full.') \
-            .set_footer(text='/r/{}, retrieved {}'.format(subreddit, time.strftime("%m/%d/%Y")), icon_url='http://i.magaimg.net/img/19y2.png')
+            .set_footer(text='{}, retrieved {}'.format(subreddit, time.strftime("%m/%d/%Y")), icon_url='http://i.magaimg.net/img/19y2.png')
             await self.bot.say(embed=embed)
 
 def setup(bot):
