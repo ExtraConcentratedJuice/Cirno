@@ -275,7 +275,6 @@ class general():
             content = data['data']['children'][objectid]['data']
 
         url = 'https://reddit.com{}'.format(content['permalink'])
-        print(url)
         embed = discord.Embed(title=content['title'], url=url, description=content['selftext'] if content['selftext_html'] else None) \
                 .set_footer(text='/r/{}, retrieved {}'.format(subreddit, time.strftime("%d/%m/%Y")), icon_url='http://i.magaimg.net/img/19y2.png')
         
