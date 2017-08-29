@@ -228,6 +228,8 @@ class general():
     async def reddit(self, ctx, subreddit):
         """Get reddit posts from the front page of a subreddit."""
 
+        #this is a mess, i'll have to redo it later
+
         is_nsfw = 'nsfw' in ctx.message.channel.name
         cleanurl = requests.compat.quote(subreddit)
         data = await GET('https://www.reddit.com/r/{}/about.json'.format(cleanurl))
@@ -280,12 +282,23 @@ class general():
         url = 'https://reddit.com{}'.format(content['permalink'])
         embed = discord.Embed(title=content['title'], url=url, description=content['selftext'] if content['selftext_html'] else None) \
                 .set_footer(text='{}, retrieved {}'.format(subreddit, time.strftime("%d/%m/%Y")), icon_url='http://i.magaimg.net/img/19y2.png')
-        
-        if content['thumbnail']:
-            embed.set_image(url=content['url'])
-        elif not content['media_embed']:
+            
+        if not content['media_embed']:
             embed = discord.Embed(title=content['title'], url=url, description='\n[' + content['url'] + '](' + content['url'] + ')') \
             .set_footer(text='{}, retrieved {}'.format(subreddit, time.strftime("%d/%m/%Y")), icon_url='http://i.magaimg.net/img/19y2.png')
+
+        if content['thumbnail']:
+            embed.set_image(url=content['url'])
+
+        reg = re.compile('(\.png|\.jpg|\.gif|\.jpeg)')
+
+        if not reg.search(content['url']):
+            try:
+                if content['media']['oembed']:
+                    embed.set_image(url=content['media']['oembed']['thumbnail_url'])
+                print('shit lol')
+            except:
+                pass
             
         try:
             await self.bot.say(embed=embed)
