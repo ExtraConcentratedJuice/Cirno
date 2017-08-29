@@ -12,8 +12,19 @@ import random
 import re
 import asyncio
 from collections import Counter
+
+async def GET(url, params={}):
+    try:
+        async with aiohttp.ClientSession() as session:
+            async with session.get(url, params=params) as resp:
+                data = await resp.json()
+    except:
+        return None
+    
+    return data
     
 class general():
+    
     def __init__(self, bot):
         self.bot = bot
         self.bot.remove_command('help')
@@ -131,7 +142,7 @@ class general():
         wordlist = []
         chan = self.bot.get_channel(channel)
         
-        async for message in self.bot.logs_from(chan, limit=20000, after=dateafter):
+        async for message in self.bot.logs_from(chan, limit=45000, after=dateafter):
             if message.author.bot:
                 continue
             if message.author == self.bot.user:
@@ -198,13 +209,9 @@ class general():
     async def WEEB(self):
         """WEEBcoin stats"""
 
-        params = {'q' : 'mining'}
-        
-        async with aiohttp.ClientSession() as session:
-            async with session.get('http://159.203.169.234/api.php', params=params) as resp:
-                data = await resp.json()
+        data = await GET('http://159.203.169.234/api.php', {'q' : 'mining'})
 
-        embed = discord.Embed(title='Weebcoin') \
+        embed = discord.Embed(title='WeebCoin') \
                 .set_footer(text='data is from kohai\'s gay api') \
                 .set_image(url='http://i.magaimg.net/img/181l.jpg') \
                 .add_field(name='Blocks', value=data['blocks'], inline=False) \
@@ -214,7 +221,73 @@ class general():
                 .add_field(name='Value', value='Zero (0) USD', inline=False)
 
         await self.bot.say(embed=embed)
+
+    @commands.command(pass_context=True)
+    @commands.cooldown(1, 10, type=commands.BucketType.channel)
+    async def reddit(self, ctx, subreddit):
+        """Get reddit posts from the front page of a subreddit."""
+
+        is_nsfw = 'nsfw' in ctx.message.channel.name
+        cleanurl = requests.compat.quote(subreddit)
+        data = await GET('https://www.reddit.com/r/{}/about.json'.format(cleanurl))
+
+        if data == None:
+            await self.bot.say('Request failed.')
+            return
         
+        try:
+            if data['kind'] == 'Listing':
+                await self.bot.say('``/r/{}`` was not found.'.format(subreddit))
+                return
+        except KeyError:
+            pass
+            
+        try:
+            if data['error'] == 404:
+                await self.bot.say('I didn\'t find shit. It is likely that ``/r/{}`` does not exist.'.format(subreddit))
+                return
+            
+            if data['error'] == 403:
+                try:
+                    if data['reason'] == 'private':
+                        await self.bot.say('``/r/{}`` is private; I can\'t retrieve posts from it.'.format(subreddit))
+                        return
+                except:
+                    pass
+                await self.bot.say('``/r/{}`` is quarantined. No way I am posting shit from there.'.format(subreddit))
+                return
+        except KeyError:
+            pass
+
+        if data['data']['over18'] and not is_nsfw:
+            await self.bot.say('``/r/{}`` is an NSFW subreddit. Do that shit in an NSFW channel.'.format(subreddit))
+
+        data = await GET('https://www.reddit.com/r/{}/hot/.json'.format(cleanurl), {'limit' : '25'})
+        #'len - 2' to account for some extra objects in 'children'
+        postlen = len(data['data']['children']) - 2
+        objectid = (random.randint(0, postlen))
+        content = data['data']['children'][0]['data']
+
+        while content['stickied']:
+            if len(data['data']['children']) <= 2:
+                break
+            objectid = (random.randint(0, postlen))
+            content = data['data']['children'][objectid]['data']
+
+        url = 'https://reddit.com{}'.format(content['permalink'])
+        print(url)
+        embed = discord.Embed(title=content['title'], url=url, description=content['selftext'] if content['selftext_html'] else None) \
+                .set_footer(text='/r/{}, retrieved {}'.format(subreddit, time.strftime("%d/%m/%Y")), icon_url='http://i.magaimg.net/img/19y2.png')
+        
+        if content['thumbnail']:
+            embed.set_image(url=content['url'])
+            
+        try:
+            await self.bot.say(embed=embed)
+        except:
+            embed = discord.Embed(title=content['title'], url=url, description='Post content is too long. Please click on the link to view it in full.') \
+            .set_footer(text='/r/{}, retrieved {}'.format(subreddit, time.strftime("%m/%d/%Y")), icon_url='http://i.magaimg.net/img/19y2.png')
+            await self.bot.say(embed=embed)
 
 def setup(bot):
     bot.add_cog(general(bot))
