@@ -291,7 +291,7 @@ class general():
             
         if not content['media_embed'] and not content['is_self']:
             embed = discord.Embed(title=content['title'], url=url, description='\n[' + content['url'] + '](' + content['url'] + ')') \
-            .set_footer(text='{}, retrieved {}'.format(subreddit, time.strftime("%d/%m/%Y")), icon_url='http://i.magaimg.net/img/19y2.png')
+            .set_footer(text='{}, retrieved {}'.format(subreddit, time.strftime("%m/%d/%Y")), icon_url='http://i.magaimg.net/img/19y2.png')
 
         if content['thumbnail']:
             embed.set_image(url=content['url'])
@@ -302,7 +302,7 @@ class general():
             try:
                 if content['media']['oembed']:
                     embed = discord.Embed(title=content['title'], url=url, description='\n[' + content['url'] + '](' + content['url'] + ')') \
-                    .set_footer(text='{}, retrieved {}'.format(subreddit, time.strftime("%d/%m/%Y")), icon_url='http://i.magaimg.net/img/19y2.png')
+                    .set_footer(text='{}, retrieved {}'.format(subreddit, time.strftime("%m/%d/%Y")), icon_url='http://i.magaimg.net/img/19y2.png')
                     embed.set_image(url=content['media']['oembed']['thumbnail_url'])
             except:
                 pass
