@@ -269,6 +269,7 @@ class general():
 
         if data['data']['over18'] and not is_nsfw:
             await self.bot.say('``/r/{}`` is an NSFW subreddit. Do that shit in an NSFW channel.'.format(subreddit))
+            return
 
         subreddit = data['data']['url']
 
@@ -303,7 +304,6 @@ class general():
                     embed = discord.Embed(title=content['title'], url=url, description='\n[' + content['url'] + '](' + content['url'] + ')') \
                     .set_footer(text='{}, retrieved {}'.format(subreddit, time.strftime("%d/%m/%Y")), icon_url='http://i.magaimg.net/img/19y2.png')
                     embed.set_image(url=content['media']['oembed']['thumbnail_url'])
-                print('shit lol')
             except:
                 pass
             
