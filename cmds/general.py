@@ -229,7 +229,7 @@ class general():
         await self.bot.say(embed=embed)
 
     @commands.command(pass_context=True)
-    @commands.cooldown(1, 10, type=commands.BucketType.channel)
+    @commands.cooldown(1, 8, type=commands.BucketType.channel)
     async def reddit(self, ctx, subreddit):
         """Get reddit posts from the front page of a subreddit."""
 
@@ -285,16 +285,13 @@ class general():
             objectid = (random.randint(0, postlen))
             content = data['data']['children'][objectid]['data']
 
+
         url = 'https://reddit.com{}'.format(content['permalink'])
         embed = discord.Embed(title=content['title'], url=url, description=content['selftext'] if content['selftext_html'] else None) \
                 .set_footer(text='{}, retrieved {}'.format(subreddit, time.strftime("%d/%m/%Y")), icon_url='http://i.magaimg.net/img/19y2.png')
-            
-        if not content['media_embed'] and not content['is_self']:
-            embed = discord.Embed(title=content['title'], url=url, description='\n[' + content['url'] + '](' + content['url'] + ')') \
-            .set_footer(text='{}, retrieved {}'.format(subreddit, time.strftime("%m/%d/%Y")), icon_url='http://i.magaimg.net/img/19y2.png')
 
         if content['thumbnail']:
-            embed.set_image(url=content['url'])
+            embed.set_image(url=content['thumbnail'])
 
         reg = re.compile('(\.png|\.jpg|\.gif|\.jpeg)')
 
@@ -302,10 +299,33 @@ class general():
             try:
                 if content['media']['oembed']:
                     embed = discord.Embed(title=content['title'], url=url, description='\n[' + content['url'] + '](' + content['url'] + ')') \
-                    .set_footer(text='{}, retrieved {}'.format(subreddit, time.strftime("%m/%d/%Y")), icon_url='http://i.magaimg.net/img/19y2.png')
+                    .set_footer(text='{}, retrieved {}'.format(subreddit, time.strftime("%d/%m/%Y")), icon_url='http://i.magaimg.net/img/19y2.png')
                     embed.set_image(url=content['media']['oembed']['thumbnail_url'])
             except:
                 pass
+
+        if not content['media_embed'] and not content['is_self']:
+            embed = discord.Embed(title=content['title'], url=url, description='\n[' + content['url'] + '](' + content['url'] + ')') \
+            .set_footer(text='{}, retrieved {}'.format(subreddit, time.strftime("%m/%d/%Y")), icon_url='http://i.magaimg.net/img/19y2.png')
+
+            if content['thumbnail']:
+                embed.set_image(url=content['thumbnail'])
+
+            if not reg.search(content['url']):
+                try:
+                    if content['media']['oembed']:
+                        embed = discord.Embed(title=content['title'], url=url, description='\n[' + content['url'] + '](' + content['url'] + ')') \
+                        .set_footer(text='{}, retrieved {}'.format(subreddit, time.strftime("%d/%m/%Y")), icon_url='http://i.magaimg.net/img/19y2.png')
+                        embed.set_image(url=content['media']['oembed']['thumbnail_url'])
+                except:
+                    pass
+
+        if content['is_self']:
+            embed = discord.Embed(title=content['title'], url=url, description=content['selftext'] if content['selftext_html'] else None) \
+            .set_footer(text='{}, retrieved {}'.format(subreddit, time.strftime("%d/%m/%Y")), icon_url='http://i.magaimg.net/img/19y2.png')
+            
+
+        #HOW DO I FIX THIS CODE HELP
             
         try:
             await self.bot.say(embed=embed)
