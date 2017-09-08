@@ -57,6 +57,7 @@ class general():
                     .add_field(name = pr + "``roboinfo``", value = 'Gives you some information regarding this bot.', inline = False) \
                     .add_field(name ='__**Game Stuff**__', value = 'Stuff related to gaem\n', inline = False) \
                     .add_field(name = pr + "``stats (SteamID64 or Vanity URL)``", value = 'Gives you Unturned stats.', inline = False) \
+                    .add_field(name = pr + "``query (x.x.x.x:12345)``", value = 'Queries and returns data about a source server. Works for other games, but tailored for Unturned.', inline = False) \
                     .add_field(name = pr + "``steamid (Vanity URL)``", value = 'Converts a Vanity URL to SteamID64.', inline = False) \
                     .add_field(name ='__**Weeb Shit**__', value = 'Gay weeb commands. Why I even waste my time on this crap?\n', inline = False) \
                     .add_field(name = pr + '``animestream (name)``', value = 'Gives you an anime stream from twist.moe.', inline = False) \

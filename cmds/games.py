@@ -7,6 +7,7 @@ import yaml
 import aiohttp
 #lul xD api wrapper
 import steam
+import valve.source.a2s
 
 class games():
     def __init__(self, bot):
@@ -112,7 +113,47 @@ class games():
                 .add_field(name='Country', value=country, inline=False)
                 
         await self.bot.say(embed=embed)
-            
+
+    @commands.command(pass_context=True)
+    @commands.cooldown(1, 20, type=commands.BucketType.channel)
+    async def query(self, ctx, server):
+        """Queries an Unturned server"""
+        if server == 'rekt':
+            await self.bot.say('does not exist anymore, and is never coming back')
+            return
+        try:
+            ip, port = server.split(':', 1)
+        except ValueError:
+            await self.bot.say('Correct format is ``x.x.x.x:12345``')
+            return
+        
+        try:
+            address = (ip, int(port))
+        except:
+            await self.bot.say('Invalid IP.')
+            return
+        
+        server = valve.source.a2s.ServerQuerier(address, timeout=0.25)
+        data = {}
+        
+        try:
+            for i in server.info():
+                data[i] = server.info()[i]
+        except valve.source.a2s.NoResponseError:
+            await self.bot.say('Timed out. Server is not online, or latency is too high.\n>Reminder that Unturned query ports are +1 over the connection port.')
+            return
+        except:
+            await self.bot.say('Query failed. Please enter a valid IP.')
+            return
+
+        embed = discord.Embed(title=data['server_name']) \
+                .add_field(name='Game', value=data['game'], inline=False) \
+                .add_field(name='Ping', value=str(round(server.ping(), 2)) + 'ms', inline=False) \
+                .add_field(name='Map', value=data['map'], inline=False) \
+                .add_field(name='Players', value=str(data['player_count']) + '/' + str(data['max_players']), inline=False) \
+                .add_field(name='Password', value='True' if data['password_protected'] == 1 else 'False', inline=False)
+
+        await self.bot.say(embed=embed)  
 
 def setup(bot):
     bot.add_cog(games(bot))

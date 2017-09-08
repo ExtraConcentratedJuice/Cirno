@@ -27,16 +27,9 @@ class misc():
 
     @commands.command(pass_context=True)
     async def roboservers(self, ctx):
-        "Server list command"""
+        """Servers"""
         
-        rbservers = ['\n```List of servers Robo-Führer is in:']
-        
-        for server in self.bot.servers:
-           rbservers.append(server.name + ' | ' + str(server.member_count) + ' members')
-
-        rbservers.insert(1, 'Total servers: {}'.format((len(rbservers) - 1)))
-        rbservers.append('```')
-        await self.bot.say('\n'.join(rbservers))
+        await self.bot.say(len(self.bot.servers))
 
     @commands.command(pass_context=True)
     async def server(self, ctx):
