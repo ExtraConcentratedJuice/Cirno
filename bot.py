@@ -1,5 +1,6 @@
 from discord.ext import commands
 import discord
+import asyncio
 import logging
 import yaml
 import sqlite3
@@ -10,9 +11,29 @@ with open("config.yaml", 'r') as f:
     config = yaml.load(f)
 
 main_cmd = ['cmds.botcontrol', 'cmds.anime', 'cmds.general', 'cmds.misc', 'cmds.games', 'cmds.moderation']
-
 bot = commands.Bot(command_prefix=config['prefix'], description='Robo-Fuhrer but it\'s rewritten to be slightly less horrible')
+LOGS = []
 
+async def dump_logs():
+    #Dumps logs to .txt every 10 minutes
+    await bot.wait_until_ready()
+    while not bot.is_closed:
+        log = open("log.txt", "a", encoding='utf8')
+        for logdata in LOGS:
+            log.write(logdata + '\n')
+        log.close()
+        LOGS.clear()
+        await asyncio.sleep(600)
+        
+
+@bot.event
+async def on_message(message):
+    if message.content.startswith(config['prefix']) and config['enable_command_logging'] == 'True':
+        logtxt = ("[{0}] [{1}] [{2}] {3}: {4}").format(message.timestamp, message.server, message.channel, message.author, message.clean_content)
+        LOGS.append(logtxt)
+
+    await bot.process_commands(message)
+        
 @bot.event
 async def on_command_error(error, ctx):
     if isinstance(error, commands.MissingRequiredArgument):
@@ -55,6 +76,9 @@ async def on_ready():
     print(bot.user.id)
     await bot.change_presence(game=discord.Game(name='the Holocaust', url="https://twitch.tv/meme", type=1))
 
+    if config['enable_command_logging'] == 'True':
+        bot.loop.create_task(dump_logs())
+
     #creates databases
     db = sqlite3.connect('data/banned.db')
     c = db.cursor()
@@ -65,6 +89,7 @@ async def on_ready():
     db = sqlite3.connect('data/data.db')
     c = db.cursor()
     c.execute('CREATE TABLE IF NOT EXISTS data(href TEXT PRIMARY KEY, data_title TEXT, data_alt TEXT, time REAL)')
+    c.execute('CREATE TABLE IF NOT EXISTS op_data(href TEXT PRIMARY KEY, data_title TEXT, data_alt TEXT, time REAL)')
     db.commit()
     db.close()
 

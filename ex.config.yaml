@@ -1,3 +1,6 @@
+#"True" to enable, "False" to disable.
+enable_command_logging:
+    "False"
 token:
     'Your token'
 steamkey:
