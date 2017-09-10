@@ -24,10 +24,40 @@ async def GET(url, params={}):
     
     return data
 
+async def reddit_image(sub, title, foot):
+        """Gets images off the front page of an image subreddit, stuffs into embed"""
+        
+        data = await GET('https://www.reddit.com/r/{}/hot/.json'.format(sub), {'limit' : '25'})
+
+        if data == None:
+            await self.bot.say('Request failed.')
+            return None
+
+        objectid = random.randint(1, 25)
+        post = data['data']['children'][objectid]['data']
+        
+        while post['is_self'] or post['stickied']:
+            objectid = random.randint(1, 25)
+            post = data['data']['children'][objectid]['data']
+
+        embed = discord.Embed(title=title, description='\n[' + post['url'] + '](' + post['url'] + ')') \
+            .set_footer(text=foot) \
+            .set_image(url=post['url'])
+        
+        reg = re.compile('(\.png|\.jpg|\.gif|\.jpeg)')
+
+        if not reg.search(post['url']):
+            embed = discord.Embed(title=title, description='\n[' + post['url'] + '](' + post['url'] + ')') \
+            .set_footer(text=foot) \
+            .set_image(url=post['thumbnail'])
+
+        return embed
+
 with open("config.yaml", 'r') as f:
     config = yaml.load(f)
-
+    
 pr = config['prefix']
+MEMES = ['bad meme', 'good meme', 'shitty meme', 'stupid meme', 'weak meme', 'strong meme']
     
 class general():
     
@@ -72,7 +102,9 @@ class general():
                     .set_thumbnail(url = 'https://i.imgur.com/qHytgB2.png') \
                     .add_field(name = "__**Memes**__", value = 'bad meme', inline = False) \
                     .add_field(name = pr + "``pepe``", value = 'P E P E', inline = False) \
+                    .add_field(name = pr + "``offensivememe``", value = 'Gives you an E D G Y meme.', inline = False) \
                     .add_field(name = pr + "``kms``", value = 'Six different ways to express your loss of the will to live.', inline = False) \
+                    .add_field(name = pr + "``dankmeme``", value = 'Gives you a D A N K  M E M E.', inline = False) \
                     .add_field(name = pr + "``gasjews``", value = 'Gas chamber meme.', inline = False) \
                     .add_field(name = "__**IMPORTANT**__", value = 'If you wish to enable the Führer\'s moderator log, create a channel named ``rf-logs`` and give RF permissions to write, read, and embed.', inline = False) \
                     .add_field(name = "__**Moderation**__", value = 'Administrative commands. You MUST be in a role named ``rf-moderator`` for the commands to work.', inline = False) \
@@ -341,24 +373,24 @@ class general():
     @commands.cooldown(2, 8, type=commands.BucketType.channel)
     async def pepe(self, ctx):
         """Returns a PEPE from the /r/pepe subreddit"""
+
+        embed = await reddit_image('dankmemes', 'PEPE', 'nice meme')
+        await self.bot.say(embed=embed)
+
+    @commands.command(pass_context=True)
+    @commands.cooldown(2, 8, type=commands.BucketType.channel)
+    async def dankmeme(self, ctx):
+        """Grabs a dankmeme from /r/dankmemes"""
         
-        data = await GET('https://www.reddit.com/r/pepe/hot/.json', {'limit' : '29'})
+        embed = await reddit_image('dankmemes', random.choice(MEMES), 'meme')
+        await self.bot.say(embed=embed)
 
-        if data == None:
-            await self.bot.say('Request failed.')
-            return
-
-        objectid = random.randint(1, 29)
-        post = data['data']['children'][objectid]['data']
+    @commands.command(pass_context=True)
+    @commands.cooldown(2, 8, type=commands.BucketType.channel)
+    async def offensivememe(self, ctx):
+        """Grabs some dark humor from /r/imgoingtohellforthis"""
         
-        while post['is_self']:
-            objectid = random.randint(1, 29)
-            post = data['data']['children'][objectid]['data']
-
-        embed = discord.Embed(title='PEPE', description='\n[' + post['url'] + '](' + post['url'] + ')') \
-            .set_footer(text='nice meme') \
-            .set_image(url=post['thumbnail'])
-
+        embed = await reddit_image('ImGoingToHellForThis', random.choice(MEMES), 'meme')
         await self.bot.say(embed=embed)
             
 def setup(bot):
