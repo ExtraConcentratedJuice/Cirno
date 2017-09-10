@@ -1,0 +1,15 @@
+token:
+    'Your token'
+steamkey:
+    'Your Steam API key'
+MALAuth:
+    username:
+        'MAL Username'
+    password:
+        'MAL Password'
+owner:
+    'Owner User Discord ID'
+osukey:
+    'osu! API key'
+prefix:
+    'r%'

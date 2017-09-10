@@ -11,4 +11,6 @@ sb.bat
 abot.py
 data/banned.db
 data/data.db
-config.yaml
+start_pub.bat
+
+start_bot.bat
