@@ -1,4 +1,5 @@
 # -*- coding: cp1252 -*-
+#i need to cut down on these dependencies later lmao
 from discord.ext import commands
 import discord
 import json
@@ -14,7 +15,6 @@ import aiohttp
 import time
 import asyncio
 import sqlite3
-#hehe xD le api wrapper
 import spice_api as spice
 import textwrap
 
@@ -393,6 +393,122 @@ class anime():
         db.close()
         twistembed = discord.Embed(title=animetitle, url='https://twist.moe' + animelink, description='Click on the link above for a highly illegal anime stream!', color=10038562).set_thumbnail(url=animethumb).set_footer(text='twist.moe')
         await self.bot.say(embed=twistembed)
+
+    @commands.command(pass_context=True)
+    @commands.cooldown(3, 8, type=commands.BucketType.channel)
+    async def animetheme(self, ctx, *, animename):
+        
+        theme_success = False
+
+        db = sqlite3.connect('data/data.db')
+        c = db.cursor()     
+        c.execute('SELECT time FROM op_data')
+        
+        try:
+            lastupdated = c.fetchone()[0]
+        except (IndexError, TypeError):
+            lastupdated = 0
+            
+        if (time.time() - lastupdated) > 86400:
+            await self.bot.say('``Cached list is out of date, retrieving new information and updating database.``')
+            
+            async with aiohttp.ClientSession() as session:
+                async with session.get('https://themes.moe/includes/anime_live_search.json?') as resp:
+                    themelist = await resp.json()
+
+            c.execute('DELETE FROM op_data')
+            db.commit()
+            c.execute('VACUUM')
+            db.commit()
+            
+            for a in themelist:
+                try:
+                    element = {'id' : a['i'], 'data_title' : a['c'], 'data_alt' : a['e'], 'time' : time.time()}
+                except KeyError:
+                    element = {'id' : a['i'], 'data_title' : a['c'], 'data_alt' : None, 'time' : time.time()}
+                    
+                c.execute('INSERT INTO op_data(id, data_title, data_alt, time) VALUES(?,?,?,?)', (element['id'], element['data_title'], element['data_alt'], element['time']))
+
+            db.commit()
+            print('Theme List Updated.')
+
+        try:
+            animeinfo = spice.search(animename, spice.get_medium('anime'), self.creds)
+            animetitle = animeinfo[0].title
+            animethumb = animeinfo[0].image_url
+        except IndexError:
+            await self.bot.say('No such anime seems to exist. Not in the MAL database, at least.')
+            return
+
+        c.execute('SELECT * FROM op_data')
+        themedata = {}
+        
+        for a in c.fetchall():
+            themedata[a[1].lower()] = a[0]
+
+        themelink = themedata.get(animetitle.lower())
+        theme_success = True
+        
+        if themelink == None:
+            theme_success = False
+            for k, v in themedata.items():
+                #Levenshtein comparison to account for small errors in names.
+                #It works fast enough, I think it's worth using.
+                if distance.levenshtein(animetitle.lower(), k.lower()) < 2:
+                    themelink = v
+                    if k.lower() != animetitle.lower():
+                        for k, v in themedata.items():
+                            if animetitle.lower() == k.lower():
+                                themelink = v
+                    theme_success = True
+                    break
+
+        if theme_success == False:
+            c.execute('SELECT * FROM op_data')
+            themelinks = {}
+            
+            for a in c.fetchall():
+                themelinks[a[2]] = a[0]
+                
+            for k, v in themelinks.items():
+                try:
+                    if distance.levenshtein(animetitle.lower(), k.lower()) < 2:
+                        themelink = v
+                        if k.lower() != animetitle.lower():
+                            for k, v in animelinks.items():
+                                if animetitle.lower() == k.lower():
+                                    themelink = v
+                        theme_success = True
+                        break
+                except AttributeError:
+                    continue
+
+        if theme_success == False:
+            self.bot.say('No themes found for the anime ``{}``.'.format(animetitle))
+            return
+
+        async with aiohttp.ClientSession() as session:
+                async with session.post('https://themes.moe/includes/anime_search.php', data={'search' : themelink}) as resp:
+                    page = await resp.text()
+
+        db.close()
+        page = re.sub(r'(?:((\\\\)*)\\)(?![\\{u])', '', page)
+        page = BeautifulSoup(page, 'lxml')
+        atitle = page.find('a', {'class' : 'mal-url'}).text
+        alink = page.findAll('a', {'class' : 'mal-url'})[0]['href']
+        #themes.moe escapes unicode
+        atitle = bytes(atitle, 'utf8').decode('unicode_escape')
+        
+        embed = discord.Embed(title=atitle, url=alink, description='List of themes for ' + atitle) \
+        .set_thumbnail(url=animethumb) \
+        .set_footer(text='https://themes.moe')
+        
+        for v in page.findAll('a', {'class' : 'vid-popup'}):
+            embed.add_field(name = v['data-type'], value='[{}]({})'.format(v['href'], v['href']), inline=False)
+
+        await self.bot.say(embed=embed)
+
+
             
 def setup(bot):
     bot.add_cog(anime(bot))

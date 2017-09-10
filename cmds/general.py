@@ -89,6 +89,7 @@ class general():
                     .add_field(name = pr + "``steamid (Vanity URL)``", value = 'Converts a Vanity URL to SteamID64.', inline = False) \
                     .add_field(name ='__**Weeb Shit**__', value = 'Gay weeb commands. Why I even waste my time on this crap?\n', inline = False) \
                     .add_field(name = pr + '``animestream (name)``', value = 'Gives you an anime stream from twist.moe.', inline = False) \
+                    .add_field(name = pr + '``animetheme (name)``', value = 'Finds you anime themes from themes.moe', inline = False) \
                     .add_field(name = pr + "``animeimg (tag)``", value = 'Gives you an anime image with your tag.', inline = False) \
                     .add_field(name = pr + "``animeinfo (name)``", value = 'Gives you information about an anime.', inline = False) \
                     .add_field(name = pr + "``catgirl``", value = 'Gives you a catgirl.', inline = False) \

@@ -91,7 +91,7 @@ async def on_ready():
     db = sqlite3.connect('data/data.db')
     c = db.cursor()
     c.execute('CREATE TABLE IF NOT EXISTS data(href TEXT PRIMARY KEY, data_title TEXT, data_alt TEXT, time REAL)')
-    c.execute('CREATE TABLE IF NOT EXISTS op_data(href TEXT PRIMARY KEY, data_title TEXT, data_alt TEXT, time REAL)')
+    c.execute('CREATE TABLE IF NOT EXISTS op_data(id TEXT PRIMARY KEY, data_title TEXT, data_alt TEXT, time REAL)')
     db.commit()
     db.close()
 
