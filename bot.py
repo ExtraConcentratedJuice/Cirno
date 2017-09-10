@@ -12,7 +12,7 @@ with open("config.yaml", 'r') as f:
 
 main_cmd = ['cmds.botcontrol', 'cmds.anime', 'cmds.general', 'cmds.misc', 'cmds.games', 'cmds.moderation']
 bot = commands.Bot(command_prefix=config['prefix'], description='Robo-Fuhrer but it\'s rewritten to be slightly less horrible')
-LOGS = []
+_logs = []
 
 async def dump_logs():
     #Dumps logs to .txt every 10 minutes
@@ -22,7 +22,7 @@ async def dump_logs():
         for logdata in LOGS:
             log.write(logdata + '\n')
         log.close()
-        LOGS.clear()
+        _logs.clear()
         await asyncio.sleep(600)
         
 
@@ -30,7 +30,7 @@ async def dump_logs():
 async def on_message(message):
     if message.content.startswith(config['prefix']) and config['enable_command_logging'] == 'True':
         logtxt = ("[{0}] [{1}] [{2}] {3}: {4}").format(message.timestamp, message.server, message.channel, message.author, message.clean_content)
-        LOGS.append(logtxt)
+        _logs.append(logtxt)
 
     await bot.process_commands(message)
         
@@ -45,6 +45,8 @@ async def on_command_error(error, ctx):
     elif isinstance(error, commands.TooManyArguments):
         await bot.send_message(ctx.message.channel, '``Error | Too many arguments.``')
     elif isinstance(error, commands.CheckFailure):
+        pass
+    elif isinstance(error, commands.CommandNotFound):
         pass
     else:
         print(str(error))

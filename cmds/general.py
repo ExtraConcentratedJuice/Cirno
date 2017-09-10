@@ -48,12 +48,10 @@ class general():
                     .add_field(name = pr + "``rbhello``", value = 'Useless command that will work 100% of the time to check if the bot is alive.', inline = False) \
                     .add_field(name = pr + "``commonwords (#channel) (days) (number of words)``", value = 'Gives you a list of commonly used words in a channel, according to your parameters.', inline = False) \
                     .add_field(name = pr + "``reddit (subreddit, e.g. The_Donald)``", value = 'Grabs a post from the front page of the specified subreddit.', inline = False) \
-                    .add_field(name = pr + "``gasjews``", value = 'Gas chamber meme.', inline = False) \
                     .add_field(name = pr + "``russianroulette``", value = 'Shoot yourself.', inline = False) \
                     .add_field(name = pr + "``dice``", value = 'Rolls a dice.', inline = False) \
                     .add_field(name = pr + "``doubledice``", value = 'Rolls TWO dice.', inline = False) \
                     .add_field(name = pr + "``coin``", value = 'Flips a coin, complete with image of a coin.', inline = False) \
-                    .add_field(name = pr + "``kms``", value = 'Six different ways to express your loss of the will to live.', inline = False) \
                     .add_field(name = pr + "``roboinfo``", value = 'Gives you some information regarding this bot.', inline = False) \
                     .add_field(name ='__**Game Stuff**__', value = 'Stuff related to gaem\n', inline = False) \
                     .add_field(name = pr + "``stats (SteamID64 or Vanity URL)``", value = 'Gives you Unturned stats.', inline = False) \
@@ -72,6 +70,10 @@ class general():
         embedhelp2 = discord.Embed(color = 0x870c0f, description = 'Page two of the offical Robo-Führer manual.') \
                     .set_author(name = '𝔗𝔥𝔢 𝔒𝔣𝔣𝔦𝔠𝔦𝔞𝔩 ℜ𝔬𝔟𝔬-𝔉ü𝔥𝔯𝔢𝔯 𝔐𝔞𝔫𝔲𝔞𝔩, pg2', url = 'https://harpy.cf', icon_url = self.bot.user.avatar_url) \
                     .set_thumbnail(url = 'https://i.imgur.com/qHytgB2.png') \
+                    .add_field(name = "__**Memes**__", value = 'bad meme', inline = False) \
+                    .add_field(name = pr + "``pepe``", value = 'P E P E', inline = False) \
+                    .add_field(name = pr + "``kms``", value = 'Six different ways to express your loss of the will to live.', inline = False) \
+                    .add_field(name = pr + "``gasjews``", value = 'Gas chamber meme.', inline = False) \
                     .add_field(name = "__**IMPORTANT**__", value = 'If you wish to enable the Führer\'s moderator log, create a channel named ``rf-logs`` and give RF permissions to write, read, and embed.', inline = False) \
                     .add_field(name = "__**Moderation**__", value = 'Administrative commands. You MUST be in a role named ``rf-moderator`` for the commands to work.', inline = False) \
                     .add_field(name = pr + "``purge (# of msgs)``", value = 'Purges the specified number of messages from the channel.', inline = False) \
@@ -335,5 +337,29 @@ class general():
             .set_footer(text='{}, retrieved {}'.format(subreddit, time.strftime("%m/%d/%Y")), icon_url='http://i.magaimg.net/img/19y2.png')
             await self.bot.say(embed=embed)
 
+    @commands.command(pass_context=True)
+    @commands.cooldown(2, 8, type=commands.BucketType.channel)
+    async def pepe(self, ctx):
+        """Returns a PEPE from the /r/pepe subreddit"""
+        
+        data = await GET('https://www.reddit.com/r/pepe/hot/.json', {'limit' : '29'})
+
+        if data == None:
+            await self.bot.say('Request failed.')
+            return
+
+        objectid = random.randint(1, 29)
+        post = data['data']['children'][objectid]['data']
+        
+        while post['is_self']:
+            objectid = random.randint(1, 29)
+            post = data['data']['children'][objectid]['data']
+
+        embed = discord.Embed(title='PEPE', description='\n[' + post['url'] + '](' + post['url'] + ')') \
+            .set_footer(text='nice meme') \
+            .set_image(url=post['thumbnail'])
+
+        await self.bot.say(embed=embed)
+            
 def setup(bot):
     bot.add_cog(general(bot))
