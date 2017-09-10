@@ -395,7 +395,7 @@ class anime():
         await self.bot.say(embed=twistembed)
 
     @commands.command(pass_context=True)
-    @commands.cooldown(3, 8, type=commands.BucketType.channel)
+    @commands.cooldown(1, 10, type=commands.BucketType.channel)
     async def animetheme(self, ctx, *, animename):
         
         theme_success = False
