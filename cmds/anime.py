@@ -353,17 +353,22 @@ class anime():
         
         for a in c.fetchall():
             animelinks[a[1]] = a[0]
-            
-        for k, v in animelinks.items():
-            if distance.levenshtein(animetitle.lower(), k.lower()) < 2:
-                animelink = v
-                #Fix for "second season" anime titles, so you don't get season one.
-                if k.lower() != animetitle.lower():
-                    for k, v in animelinks.items():
-                        if animetitle.lower() == k.lower():
-                            animelink = v
-                stream_success = True
-                break
+
+        animelink = animelinks.get(animetitle.lower())
+        stream_success = True
+        
+        if animelink == None:
+            stream_success = False
+            for k, v in animelinks.items():
+                if distance.levenshtein(animetitle.lower(), k.lower()) < 2:
+                    animelink = v
+                    #Fix for "second season" anime titles, so you don't get season one.
+                    if k.lower() != animetitle.lower():
+                        for k, v in animelinks.items():
+                            if animetitle.lower() == k.lower():
+                                animelink = v
+                    stream_success = True
+                    break
             
         if stream_success == False:
             c.execute('SELECT * FROM data')
@@ -487,9 +492,13 @@ class anime():
             self.bot.say('No themes found for the anime ``{}``.'.format(animetitle))
             return
 
-        async with aiohttp.ClientSession() as session:
-                async with session.post('https://themes.moe/includes/anime_search.php', data={'search' : themelink}) as resp:
-                    page = await resp.text()
+        try:
+            async with aiohttp.ClientSession() as session:
+                    async with session.post('https://themes.moe/includes/anime_search.php', data={'search' : themelink}) as resp:
+                        page = await resp.text()
+        except:
+            await self.bot.say('Request to themes.moe failed. Try again later.')
+            return
 
         db.close()
         page = re.sub(r'(?:((\\\\)*)\\)(?![\\{u])', '', page)
@@ -508,7 +517,59 @@ class anime():
 
         await self.bot.say(embed=embed)
 
+    @commands.command(pass_context=True)
+    @commands.cooldown(1, 10, type=commands.BucketType.channel)
+    async def touhou(self, ctx, *, twohu):
+        """Grabs an entry from the Touhou wiki"""
 
+        #lol 'structured progamming' who needs that
+        try:
+            async with aiohttp.ClientSession() as session:
+                async with session.get('https://en.touhouwiki.net/api.php', params={'format' : 'json', 'action' : 'opensearch', 'search' : twohu}) as resp:
+                    search = await resp.json()
+        except:
+            await self.bot.say('Request failed. Try again later.')
+            return
+
+        if len(search[1]) == 0:
+            await self.bot.say('Nothing was found on the Touhou wiki for ``{}``.'.format(twohu))
+            return
+        
+        try:
+            async with aiohttp.ClientSession() as session:
+                async with session.get('https://en.touhouwiki.net/index.php', params={'title' : search[1][0], 'mobileaction' : 'toggle_view_mobile'}) as resp:
+                    page = await resp.text()
+        except:
+            await self.bot.say('Request failed. Try again later.')
+            return
+        
+        page = BeautifulSoup(page, 'lxml')
+        contentdiv = page.find('div', {'class' : 'mf-section-0'})
+
+        try:
+            mainimage = contentdiv.find('a', {'class' : 'image'}).find('img')
+        except:
+            mainimage = None
             
+        summary = contentdiv.find_all('p')[-1]
+        
+        try:
+            name = contentdiv.find('th', {'class' : 'vcard; incell_top'}).contents[2]
+        except:
+            name = None
+
+        try:
+            name = name.text
+        except:
+            pass
+            
+        embed = discord.Embed(title=name if name != None else search[1][0], description=summary.text, url=search[3][0])
+        if mainimage != None:
+            embed.set_image(url='https://en.touhouwiki.net{}'.format(mainimage['src']))
+                            
+        embed.set_footer(text='Information scraped from https://en.touhouwiki.net')
+                   
+        await self.bot.say(embed=embed)
+
 def setup(bot):
     bot.add_cog(anime(bot))

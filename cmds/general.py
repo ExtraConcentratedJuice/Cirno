@@ -75,7 +75,7 @@ class general():
                     .set_author(name = '𝔗𝔥𝔢 𝔒𝔣𝔣𝔦𝔠𝔦𝔞𝔩 ℜ𝔬𝔟𝔬-𝔉ü𝔥𝔯𝔢𝔯 𝔐𝔞𝔫𝔲𝔞𝔩', url = 'https://harpy.cf', icon_url = self.bot.user.avatar_url) \
                     .set_thumbnail(url = 'https://i.imgur.com/qHytgB2.png') \
                     .add_field(name = "__**General Purpose**__", value = 'The usual commands. Satisfaction not guaranteed.', inline = False) \
-                    .add_field(name = pr + "``rbhello``", value = 'Useless command that will work 100% of the time to check if the bot is alive.', inline = False) \
+                    .add_field(name = pr + "``rfhello``", value = 'Useless command that will work 100% of the time to check if the bot is alive.', inline = False) \
                     .add_field(name = pr + "``commonwords (#channel) (days) (number of words)``", value = 'Gives you a list of commonly used words in a channel, according to your parameters.', inline = False) \
                     .add_field(name = pr + "``reddit (subreddit, e.g. The_Donald)``", value = 'Grabs a post from the front page of the specified subreddit.', inline = False) \
                     .add_field(name = pr + "``russianroulette``", value = 'Shoot yourself.', inline = False) \
@@ -87,18 +87,24 @@ class general():
                     .add_field(name = pr + "``stats (SteamID64 or Vanity URL)``", value = 'Gives you Unturned stats.', inline = False) \
                     .add_field(name = pr + "``query (x.x.x.x:12345)``", value = 'Queries and returns data about a source server. Works for other games, but tailored for Unturned.', inline = False) \
                     .add_field(name = pr + "``steamid (Vanity URL)``", value = 'Converts a Vanity URL to SteamID64.', inline = False) \
+                    .add_field(name = pr + "``osu (osu username)``", value = 'Gives you osu! statistics for standard mode.', inline = False) \
+                    .set_footer(text = 'Robo-Führer, by ExtraConcentratedJuice', icon_url = 'https://i.imgur.com/ItO8dUz.png')
+        embedhelp2 = discord.Embed(color = 0x870c0f, description = 'Page two of the offical Robo-Führer manual.') \
+                    .set_author(name = '𝔗𝔥𝔢 𝔒𝔣𝔣𝔦𝔠𝔦𝔞𝔩 ℜ𝔬𝔟𝔬-𝔉ü𝔥𝔯𝔢𝔯 𝔐𝔞𝔫𝔲𝔞𝔩, pg2', url = 'https://harpy.cf', icon_url = self.bot.user.avatar_url) \
+                    .set_thumbnail(url = 'https://i.imgur.com/qHytgB2.png') \
                     .add_field(name ='__**Weeb Shit**__', value = 'Gay weeb commands. Why I even waste my time on this crap?\n', inline = False) \
-                    .add_field(name = pr + '``animestream (name)``', value = 'Gives you an anime stream from twist.moe.', inline = False) \
-                    .add_field(name = pr + '``animetheme (name)``', value = 'Finds you anime themes from themes.moe', inline = False) \
+                    .add_field(name = pr + '``animestream (anime title)``', value = 'Gives you an anime stream from twist.moe.', inline = False) \
+                    .add_field(name = pr + '``animetheme (anime title)``', value = 'Finds you anime themes from themes.moe', inline = False) \
                     .add_field(name = pr + "``animeimg (tag)``", value = 'Gives you an anime image with your tag.', inline = False) \
                     .add_field(name = pr + "``animeinfo (name)``", value = 'Gives you information about an anime.', inline = False) \
+                    .add_field(name = pr + "``touhou (name)``", value = 'Pulls information from the Touhou wiki about Touhou characters and whatnot.', inline = False) \
                     .add_field(name = pr + "``catgirl``", value = 'Gives you a catgirl.', inline = False) \
                     .add_field(name = pr + "``thicc``", value = 'T H I C C', inline = False) \
                     .add_field(name = pr + "``thighhighs``", value = 'Gives you thighhighs.', inline = False) \
                     .add_field(name = pr + "``weebsearch (tag1 tag2 character_name)``", value = 'Weeaboo image search. Separate tags by spaces. Spaces in character names represented by an underscore.', inline = False) \
                     .add_field(name = pr + "``gelbooru (tag1 character_name)``", value = 'Same as weebsearch, just on Gelbooru.', inline = False) \
-                    .set_footer(text = 'Robo-Führer, by ExtraConcentratedJuice', icon_url = 'https://i.imgur.com/ItO8dUz.png')
-        embedhelp2 = discord.Embed(color = 0x870c0f, description = 'Page two of the offical Robo-Führer manual.') \
+                    .set_footer(text= "Robo-Führer, by ExtraConcentratedJuice", icon_url = 'https://i.imgur.com/ItO8dUz.png')
+        embedhelp3 = discord.Embed(color = 0x870c0f, description = 'Page three of the offical Robo-Führer manual.') \
                     .set_author(name = '𝔗𝔥𝔢 𝔒𝔣𝔣𝔦𝔠𝔦𝔞𝔩 ℜ𝔬𝔟𝔬-𝔉ü𝔥𝔯𝔢𝔯 𝔐𝔞𝔫𝔲𝔞𝔩, pg2', url = 'https://harpy.cf', icon_url = self.bot.user.avatar_url) \
                     .set_thumbnail(url = 'https://i.imgur.com/qHytgB2.png') \
                     .add_field(name = "__**Memes**__", value = 'bad meme', inline = False) \
@@ -121,9 +127,9 @@ class general():
                     .add_field(name = pr + "``reportissue (issue)``", value = 'Reports an issue. Suggestions are also welcome. If you misuse this command, you will be niggered.', inline = False) \
                     .set_footer(text= "Robo-Führer, by ExtraConcentratedJuice", icon_url = 'https://i.imgur.com/ItO8dUz.png')
 
-        await self.bot.send_message(ctx.message.author, 'Hey, here\'s that help that you wanted.')
         await self.bot.send_message(ctx.message.author, embed=embedhelp)
         await self.bot.send_message(ctx.message.author, embed=embedhelp2)
+        await self.bot.send_message(ctx.message.author, embed=embedhelp3)
         
     
 
