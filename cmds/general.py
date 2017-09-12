@@ -353,6 +353,9 @@ class general():
             if content['thumbnail']:
                 embed.set_image(url=content['thumbnail'])
 
+            if reg.search(content['url']):
+                embed.set_image(url=content['url'])
+
             if not reg.search(content['url']):
                 try:
                     if content['media']['oembed']:
@@ -367,7 +370,7 @@ class general():
             .set_footer(text='{}, retrieved {}'.format(subreddit, time.strftime("%d/%m/%Y")), icon_url='http://i.magaimg.net/img/19y2.png')
             
 
-        #HOW DO I FIX THIS CODE HELP
+        #This is all just for code obfuscation! Yeah. Obfuscation. I totally did think how I would implement this before doing it!
             
         try:
             await self.bot.say(embed=embed)

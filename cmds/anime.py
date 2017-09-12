@@ -567,7 +567,7 @@ class anime():
         if mainimage != None:
             embed.set_image(url='https://en.touhouwiki.net{}'.format(mainimage['src']))
                             
-        embed.set_footer(text='Information scraped from https://en.touhouwiki.net')
+        embed.set_footer(text='Information scraped from https://en.touhouwiki.net', icon_url='http://i.imgur.com/aLMipX6.png')
                    
         await self.bot.say(embed=embed)
 

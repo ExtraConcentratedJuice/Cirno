@@ -16,3 +16,11 @@ osukey:
     'osu! API key'
 prefix:
     'r%'
+enable_botlist:
+    'False'
+bot_client_id:
+    'bot's client id'
+discord_bots_token:
+    'token'
+discord_pw_token:
+    'token'

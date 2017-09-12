@@ -1,5 +1,6 @@
 from discord.ext import commands
 import discord
+import aiohttp
 import asyncio
 import logging
 import yaml
@@ -12,17 +13,38 @@ with open("config.yaml", 'r') as f:
 
 main_cmd = ['cmds.botcontrol', 'cmds.anime', 'cmds.general', 'cmds.misc', 'cmds.games', 'cmds.moderation']
 bot = commands.Bot(command_prefix=config['prefix'], description='Robo-Fuhrer but it\'s rewritten to be slightly less horrible')
-_logs = []
+logs = []
+
+async def post_botlist():
+    await bot.wait_until_ready()
+    while not bot.is_closed:
+        serverlen = len(bot.servers)
+        headers = {'Authorization': config['discord_bots_token']}
+        data = {'server_count': serverlen}
+        url = 'https://discordbots.org/api/bots/{}/stats'.format(config['bot_client_id'])
+        
+        async with aiohttp.ClientSession() as session:
+            await session.post(url, data=data, headers=headers)
+            
+        headers = {'Authorization': config['discord_pw_token']}
+        data = {'server_count': serverlen}
+        url = 'https://bots.discord.pw/api/bots/{}/stats'.format(config['bot_client_id'])
+        
+        async with aiohttp.ClientSession() as session:
+            await session.post(url, data=data, headers=headers)
+            
+        print('Successfully sent server count to botlist!')
+        await asyncio.sleep(1800)
 
 async def dump_logs():
     #Dumps logs to .txt every 10 minutes
     await bot.wait_until_ready()
     while not bot.is_closed:
         log = open("log.txt", "a", encoding='utf8')
-        for logdata in LOGS:
+        for logdata in logs:
             log.write(logdata + '\n')
         log.close()
-        _logs.clear()
+        logs.clear()
         await asyncio.sleep(600)
         
 
@@ -30,7 +52,7 @@ async def dump_logs():
 async def on_message(message):
     if message.content.startswith(config['prefix']) and config['enable_command_logging'] == 'True':
         logtxt = ("[{0}] [{1}] [{2}] {3}: {4}").format(message.timestamp, message.server, message.channel, message.author, message.clean_content)
-        _logs.append(logtxt)
+        logs.append(logtxt)
 
     await bot.process_commands(message)
         
@@ -80,6 +102,9 @@ async def on_ready():
 
     if config['enable_command_logging'] == 'True':
         bot.loop.create_task(dump_logs())
+
+    if config['enable_botlist'] == 'True':
+        bot.loop.create_task(post_botlist())
 
     #creates databases
     db = sqlite3.connect('data/banned.db')
