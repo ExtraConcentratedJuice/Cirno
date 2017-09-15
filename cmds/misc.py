@@ -67,7 +67,8 @@ class misc():
     async def reportissue(self, ctx, *, issue):
         embed = discord.Embed(description=issue) \
         .set_author(name=ctx.message.author.name, icon_url=ctx.message.author.avatar_url) \
-        .add_field(name='Server: ', value=ctx.message.server.name)
+        .add_field(name='Server: ', value=ctx.message.server.name) \
+        .add_field(name='Channel: ', value=ctx.message.channel.id)
         
         await self.bot.send_message(self.bot.get_channel('338421643879645186'), embed=embed)
         await self.bot.add_reaction(ctx.message, '\U0001F44C')

@@ -1,13 +1,59 @@
 from discord.ext import commands
 import discord
+import re
 import json
 import requests
 import random
 import yaml
 import aiohttp
+from bs4 import BeautifulSoup
+from urllib.parse import quote
 #lul xD api wrapper
 import steam
 import valve.source.a2s
+
+async def parse_item_data(query):
+    url = 'https://steamcommunity.com/market/search/render/search'
+    params = {'appid' : '304930', 'query' : query, 'start' : 0, 'count' : 100}
+    try:
+        async with aiohttp.ClientSession() as session:
+            async with session.get(url, params=params) as resp:
+                data = await resp.json()
+    except:
+        return False
+
+    if data['success'] == False:
+        return False
+
+    if data['total_count'] == 0:
+        return False
+
+    item = {}
+    html = data['results_html']
+    html = re.sub(r'(?:((\\\\)*)\\)(?![\\{u])', '', html)
+    content = BeautifulSoup(html, 'lxml')
+    rows = content.find_all('div', {'class' : 'market_listing_row'})
+    page = None
+
+    for r in rows:      
+        if r.find('span', {'market_listing_item_name'}).text.lower() == query.lower():
+            page = r
+            break
+
+    if page == None:
+        resultid = '0'
+        page = content.find('div', {'class' : 'market_listing_row'})
+        
+    item['Name'] = page.find('span', {'class' : 'market_listing_item_name'}).text
+    item['img_url'] = page.find('img')['src']
+    item['url_enc'] = quote(item['Name'], safe='')
+
+    for i in page.find_all('span', {'class' : 'normal_price'}):
+        if len(i['class']) == 1:
+            item['Price'] = i.text
+            break
+
+    return item
 
 class games():
     def __init__(self, bot):
@@ -153,7 +199,25 @@ class games():
                 .add_field(name='Players', value=str(data['player_count']) + '/' + str(data['max_players']), inline=False) \
                 .add_field(name='Password', value='True' if data['password_protected'] == 1 else 'False', inline=False)
 
-        await self.bot.say(embed=embed)  
+        await self.bot.say(embed=embed)
+
+    @commands.command(pass_context=True)
+    @commands.cooldown(1, 8, type=commands.BucketType.channel)
+    async def unturnedprice(self, ctx, *, query):
+        data = await parse_item_data(query)
+        
+        if not data:
+            await self.bot.say('No items were found for ``{}``'.format(query))
+            return
+
+        embed = discord.Embed(title=data['Name'], url='http://steamcommunity.com/market/listings/304930/{}'.format(data['url_enc'])) \
+            .add_field(name='Price', value=data['Price'], inline=False) \
+            .set_thumbnail(url=data['img_url']) \
+            .set_footer(text='Prices retrieved from the Steam Community Market')
+
+
+        await self.bot.say(embed=embed)
+                
 
 def setup(bot):
     bot.add_cog(games(bot))

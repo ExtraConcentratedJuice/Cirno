@@ -13,6 +13,16 @@ class botcontrol():
     owner = config['owner']
 
     @commands.command(pass_context=True)
+    async def sendmsg(self, ctx, channelid, *, reply):
+        """So you can reply to issue reports"""
+
+        if ctx.message.author.id != self.owner:
+            return
+
+        await self.bot.send_message(self.bot.get_channel(channelid), reply)
+        await self.bot.say('Success!')
+
+    @commands.command(pass_context=True)
     async def rfblacklisted(self, ctx):
         """Prints all blacklisted users."""
         if ctx.message.author.id != self.owner:

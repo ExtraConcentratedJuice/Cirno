@@ -88,6 +88,7 @@ class general():
                     .add_field(name = pr + "``query (x.x.x.x:12345)``", value = 'Queries and returns data about a source server. Works for other games, but tailored for Unturned.', inline = False) \
                     .add_field(name = pr + "``steamid (Vanity URL)``", value = 'Converts a Vanity URL to SteamID64.', inline = False) \
                     .add_field(name = pr + "``osu (osu username)``", value = 'Gives you osu! statistics for standard mode.', inline = False) \
+                    .add_field(name = pr + "``unturnedprice (item)``", value = 'Gets a price of an Unturned item from the community marketplace', inline = False) \
                     .set_footer(text = 'Robo-Führer, by ExtraConcentratedJuice', icon_url = 'https://i.imgur.com/ItO8dUz.png')
         embedhelp2 = discord.Embed(color = 0x870c0f, description = 'Page two of the offical Robo-Führer manual.') \
                     .set_author(name = '𝔗𝔥𝔢 𝔒𝔣𝔣𝔦𝔠𝔦𝔞𝔩 ℜ𝔬𝔟𝔬-𝔉ü𝔥𝔯𝔢𝔯 𝔐𝔞𝔫𝔲𝔞𝔩, pg2', url = 'https://harpy.cf', icon_url = self.bot.user.avatar_url) \
@@ -105,7 +106,7 @@ class general():
                     .add_field(name = pr + "``gelbooru (tag1 character_name)``", value = 'Same as weebsearch, just on Gelbooru.', inline = False) \
                     .set_footer(text= "Robo-Führer, by ExtraConcentratedJuice", icon_url = 'https://i.imgur.com/ItO8dUz.png')
         embedhelp3 = discord.Embed(color = 0x870c0f, description = 'Page three of the offical Robo-Führer manual.') \
-                    .set_author(name = '𝔗𝔥𝔢 𝔒𝔣𝔣𝔦𝔠𝔦𝔞𝔩 ℜ𝔬𝔟𝔬-𝔉ü𝔥𝔯𝔢𝔯 𝔐𝔞𝔫𝔲𝔞𝔩, pg2', url = 'https://harpy.cf', icon_url = self.bot.user.avatar_url) \
+                    .set_author(name = '𝔗𝔥𝔢 𝔒𝔣𝔣𝔦𝔠𝔦𝔞𝔩 ℜ𝔬𝔟𝔬-𝔉ü𝔥𝔯𝔢𝔯 𝔐𝔞𝔫𝔲𝔞𝔩, pg3', url = 'https://harpy.cf', icon_url = self.bot.user.avatar_url) \
                     .set_thumbnail(url = 'https://i.imgur.com/qHytgB2.png') \
                     .add_field(name = "__**Memes**__", value = 'bad meme', inline = False) \
                     .add_field(name = pr + "``pepe``", value = 'P E P E', inline = False) \
