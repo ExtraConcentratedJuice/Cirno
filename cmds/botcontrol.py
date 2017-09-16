@@ -1,3 +1,7 @@
+# -*- coding: utf-8 -*-
+"""
+Module for bot control related commands.
+"""
 from discord.ext import commands
 import discord
 import yaml
@@ -25,6 +29,7 @@ class botcontrol():
     @commands.command(pass_context=True)
     async def rfblacklisted(self, ctx):
         """Prints all blacklisted users."""
+        
         if ctx.message.author.id != self.owner:
             return
         
@@ -97,6 +102,7 @@ class botcontrol():
     @commands.command(pass_context=True)
     async def rfreload(self, ctx, *, module):
         """Lets you reload a command module."""
+        
         if ctx.message.author.id != self.owner:
             return
         
@@ -111,6 +117,7 @@ class botcontrol():
     @commands.command(pass_context=True)
     async def rfload(self, ctx, *, module):
         """Lets you load a command module."""
+        
         if ctx.message.author.id != self.owner:
             return
         
@@ -124,6 +131,7 @@ class botcontrol():
     @commands.command(pass_context=True)
     async def rfunload(self, ctx, *, module):
         """Lets you unload a command module."""
+        
         if ctx.message.author.id != self.owner:
             return
         

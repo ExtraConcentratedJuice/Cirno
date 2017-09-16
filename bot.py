@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from discord.ext import commands
 import discord
 import aiohttp
@@ -55,7 +56,7 @@ async def on_message(message):
         logs.append(logtxt)
 
     await bot.process_commands(message)
-        
+    
 @bot.event
 async def on_command_error(error, ctx):
     if isinstance(error, commands.MissingRequiredArgument):

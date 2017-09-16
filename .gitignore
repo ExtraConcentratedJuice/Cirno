@@ -2,6 +2,8 @@ Thumbs.db
 ehthumbs.db
 ehthumbs_vista.db
 /cmds/__pycache__/
+/.idea
+/.idea/
 config.yaml
 timeinfo
 twistlist.html

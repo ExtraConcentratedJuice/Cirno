@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
+"""
+Module for general commands.
+"""
 from discord.ext import commands
 import discord
-import time
-import os
 import requests
-import json
 import aiohttp
 import time
 from datetime import datetime, timedelta
@@ -29,7 +29,7 @@ async def reddit_image(sub, title, foot):
         
         data = await GET('https://www.reddit.com/r/{}/hot/.json'.format(sub), {'limit' : '25'})
 
-        if data == None:
+        if data is None:
             await self.bot.say('Request failed.')
             return None
 
@@ -58,7 +58,7 @@ with open("config.yaml", 'r') as f:
     
 pr = config['prefix']
 MEMES = ['bad meme', 'good meme', 'shitty meme', 'stupid meme', 'weak meme', 'strong meme']
-    
+
 class general():
     
     def __init__(self, bot):
@@ -196,7 +196,7 @@ class general():
                 continue
             if message.author == self.bot.user:
                 continue
-            cleanmsg = (message.clean_content).encode('ascii', 'ignore')
+            cleanmsg = message.clean_content.encode('ascii', 'ignore')
             wordlist.append(str(cleanmsg))
 
         wordlist = ''.join(wordlist)
@@ -275,8 +275,6 @@ class general():
     @commands.cooldown(1, 8, type=commands.BucketType.channel)
     async def reddit(self, ctx, subreddit):
         """Get reddit posts from the front page of a subreddit."""
-
-        #this is a mess, i'll have to redo it later
 
         is_nsfw = 'nsfw' in ctx.message.channel.name
         cleanurl = requests.compat.quote(subreddit)
@@ -372,7 +370,7 @@ class general():
             
 
         #This is all just for code obfuscation! Yeah. Obfuscation. I totally did think how I would implement this before doing it!
-            
+        
         try:
             await self.bot.say(embed=embed)
         except:
@@ -403,6 +401,6 @@ class general():
         
         embed = await reddit_image('ImGoingToHellForThis', random.choice(MEMES), 'meme')
         await self.bot.say(embed=embed)
-            
+        
 def setup(bot):
     bot.add_cog(general(bot))

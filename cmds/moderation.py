@@ -1,4 +1,12 @@
-# -*- coding: cp1252 -*-
+# -*- coding: utf-8 -*-
+"""
+Module for moderation related commands.
+
+TO DO:
+
+mute command
+
+"""
 from discord.ext import commands
 import discord
 
@@ -26,7 +34,7 @@ class moderation():
         try:
             await self.bot.purge_from(channel=ctx.message.channel, limit=number)
         except discord.Forbidden:
-            await self.bot.say('Failed to purge. Robo-Führer has insufficient privileges.')
+            await self.bot.say('Failed to purge. Robo-FÃ¼hrer has insufficient privileges.')
             return
 
         await self.bot.say('{} messages removed from {}. I hope that wasn\'t a mistake.'.format(str(number), ctx.message.channel.mention))
@@ -52,7 +60,7 @@ class moderation():
         try:
             await self.bot.ban(user, delete_message_days=7)
         except discord.Forbidden:
-            await self.bot.say('Failed to ban. Robo-Führer has insufficient privileges.')
+            await self.bot.say('Failed to ban. Robo-FÃ¼hrer has insufficient privileges.')
             return
 
         await self.bot.say('The specified user has been banned.')
@@ -92,7 +100,7 @@ class moderation():
         try:
             await self.bot.kick(user)
         except discord.Forbidden:
-            await self.bot.say('Failed to kick. Robo-Führer has insufficient privileges.')
+            await self.bot.say('Failed to kick. Robo-FÃ¼hrer has insufficient privileges.')
             return
 
         await self.bot.say('The specified user has been kicked.')
@@ -133,7 +141,7 @@ class moderation():
             await self.bot.ban(user, delete_message_days=7)
             await self.bot.unban(user.server, user)
         except discord.Forbidden:
-            await self.bot.say('Failed to ban. Robo-Führer has insufficient privileges.')
+            await self.bot.say('Failed to ban. Robo-FÃ¼hrer has insufficient privileges.')
             return
 
         await self.bot.say('The specified user has been softbanned.')

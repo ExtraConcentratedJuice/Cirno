@@ -1,5 +1,14 @@
-# -*- coding: cp1252 -*-
-#i need to cut down on these dependencies later lmao
+# -*- coding: utf-8 -*-
+"""
+Module for anime related commands.
+
+TO DO:
+
+Add manga stuff
+MAL user profile stuff
+Improve animestreams/themes
+
+"""
 from discord.ext import commands
 import discord
 import json
@@ -107,7 +116,7 @@ class anime():
             return
 
         hentaiimg = ("https://danbooru.donmai.us{}".format(img['file_url']))
-            
+        
         embed = discord.Embed(title='tag: '+imgtag) \
         .set_image(url=hentaiimg) \
         .set_footer(text='https://danbooru.donmai.us', icon_url='http://i.imgur.com/4Wjm9rb.png')
@@ -146,7 +155,7 @@ class anime():
                 himg = ("http://danbooru.donmai.us{0}".format(i['file_url']))
             except:
                 continue
-                               
+                
             embed = discord.Embed(title='tag: ' + imgtag) \
             .set_image(url=himg) \
             .set_footer(text='https://danbooru.donmai.us', icon_url='http://i.imgur.com/4Wjm9rb.png')
@@ -164,7 +173,7 @@ class anime():
         imagelist = await self.fetchlist('danbooru', params)
         img = random.choice(imagelist)
         animeimg = ("https://danbooru.donmai.us{}".format(img['file_url']))
-            
+        
         embed = discord.Embed(title='thighhighs') \
         .set_image(url=animeimg) \
         .set_footer(text='https://danbooru.donmai.us', icon_url='http://i.imgur.com/4Wjm9rb.png')
@@ -181,7 +190,7 @@ class anime():
         imagelist = await self.fetchlist('danbooru', params)
         img = random.choice(imagelist)
         animeimg = ("https://danbooru.donmai.us{}".format(img['file_url']))
-            
+        
         embed = discord.Embed(title=random.choice(catgirlmessage)) \
         .set_image(url=animeimg) \
         .set_footer(text='https://danbooru.donmai.us', icon_url='http://i.imgur.com/4Wjm9rb.png')
@@ -196,7 +205,7 @@ class anime():
         imagelist = await self.fetchlist('danbooru', params)
         img = random.choice(imagelist)
         thiccimg = ("https://danbooru.donmai.us{}".format(img['file_url']))
-            
+        
         thiccembed = discord.Embed(title='T H I C C') \
         .set_image(url=thiccimg) \
         .set_footer(text='https://danbooru.donmai.us', icon_url='http://i.imgur.com/4Wjm9rb.png')
@@ -239,14 +248,14 @@ class anime():
 
         try:
             params = {'tags' : imgtags, 'limit' : 25, 'pid' : (random.randint(1, 10))}
-            images = await self.fetchlist('gelbooru', params)  
+            images = await self.fetchlist('gelbooru', params)
             if len(images) == 0:
                 raise ValueError('No images found.')
         except:
             try:
                 params = {'tags' : imgtags, 'limit' : 30}
-                images = await self.fetchlist('gelbooru', params)  
-                        
+                images = await self.fetchlist('gelbooru', params)
+                
                 if len(images) == 0:
                     raise ValueError('No images found.')
             except:
@@ -308,7 +317,7 @@ class anime():
 
         stream_success = False
         db = sqlite3.connect('data/data.db')
-        c = db.cursor()     
+        c = db.cursor()
         c.execute('SELECT time FROM data')
         
         try:
@@ -339,7 +348,7 @@ class anime():
 
             db.commit()
             print('List Updated.')
-                
+            
         try:
             animeinfo = spice.search(animename, spice.get_medium('anime'), self.creds)
             animetitle = animeinfo[0].title
@@ -370,7 +379,7 @@ class anime():
                     stream_success = True
                     break
             
-        if stream_success == False:
+        if not stream_success:
             c.execute('SELECT * FROM data')
             animelinks = {}
             
@@ -390,7 +399,7 @@ class anime():
                 except AttributeError:
                     continue
 
-            if stream_success == False:
+            if not stream_success:
                 htmlurl = quote(animetitle, safe='')
                 await self.bot.say('The anime (*' + animetitle + '*) does not seem to exist in the twist.moe streams.\n\nHere are some pages pointing to what you might be looking for:\n\n__**Nyaa**__\n\nhttps://nyaa.pantsu.cat/search?c=_&userID=0&q=' + htmlurl + '\n\n__**Gayanime**__\n\nhttp://kissanime.ru/Search/Anime?keyword=' + htmlurl)
                 return
@@ -406,7 +415,7 @@ class anime():
         theme_success = False
 
         db = sqlite3.connect('data/data.db')
-        c = db.cursor()     
+        c = db.cursor()
         c.execute('SELECT time FROM op_data')
         
         try:
@@ -468,7 +477,7 @@ class anime():
                     theme_success = True
                     break
 
-        if theme_success == False:
+        if not theme_success:
             c.execute('SELECT * FROM op_data')
             themelinks = {}
             
@@ -488,7 +497,7 @@ class anime():
                 except AttributeError:
                     continue
 
-        if theme_success == False:
+        if not theme_success:
             self.bot.say('No themes found for the anime ``{}``.'.format(animetitle))
             return
 
@@ -566,9 +575,9 @@ class anime():
         embed = discord.Embed(title=name if name != None else search[1][0], description=summary.text, url=search[3][0])
         if mainimage != None:
             embed.set_image(url='https://en.touhouwiki.net{}'.format(mainimage['src']))
-                            
+            
         embed.set_footer(text='Information scraped from https://en.touhouwiki.net', icon_url='http://i.imgur.com/aLMipX6.png')
-                   
+        
         await self.bot.say(embed=embed)
 
 def setup(bot):

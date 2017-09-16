@@ -1,20 +1,28 @@
-from discord.ext import commands
-import discord
+# -*- coding: utf-8 -*-
+"""
+Module for game related commands.
+
+TO DO:
+
+CS:GO Stats/Items
+
+"""
 import re
-import json
-import requests
-import random
-import yaml
 import aiohttp
+import discord
+from discord.ext import commands
+import yaml
 from bs4 import BeautifulSoup
 from urllib.parse import quote
-#lul xD api wrapper
 import steam
 import valve.source.a2s
 
 async def parse_item_data(query):
+    """parse html data"""
+    
     url = 'https://steamcommunity.com/market/search/render/search'
     params = {'appid' : '304930', 'query' : query, 'start' : 0, 'count' : 100}
+    
     try:
         async with aiohttp.ClientSession() as session:
             async with session.get(url, params=params) as resp:
@@ -22,11 +30,11 @@ async def parse_item_data(query):
     except:
         return False
 
-    if data['success'] == False:
+    if not data['success']:
         return False
 
     if data['total_count'] == 0:
-        return False
+        return None
 
     item = {}
     html = data['results_html']
@@ -35,13 +43,12 @@ async def parse_item_data(query):
     rows = content.find_all('div', {'class' : 'market_listing_row'})
     page = None
 
-    for r in rows:      
+    for r in rows:
         if r.find('span', {'market_listing_item_name'}).text.lower() == query.lower():
             page = r
             break
 
-    if page == None:
-        resultid = '0'
+    if page is None:
         page = content.find('div', {'class' : 'market_listing_row'})
         
     item['Name'] = page.find('span', {'class' : 'market_listing_item_name'}).text
@@ -63,7 +70,6 @@ class games():
         config = yaml.load(f)
         
     steam.api.key.set(config['steamkey'])
-
     osukey = config['osukey']
     
     @commands.command(pass_context=True)
@@ -81,7 +87,7 @@ class games():
             profile = steam.user.profile(str(player))
             utstats = steam.api.interface('ISteamUserStats').GetUserStatsForGame(appid=304930, steamid=int(player))
             steamname = (profile.persona)
-                        
+            
             playerskilled = (utstats['playerstats']['stats']['Kills_Players']['value'])
             zombieskilled = (utstats['playerstats']['stats']['Kills_Zombies_Normal']['value'])
             megaskilled = (utstats['playerstats']['stats']['Kills_Zombies_Mega']['value'])
@@ -93,7 +99,7 @@ class games():
             arenawins = (utstats['playerstats']['stats']['Arena_Wins']['value'])
             headshotshit = (utstats['playerstats']['stats']['Headshots']['value'])
             headshotrate = round(headshotshit/shotshit * 100, 2)
-            #SHIT that is one long ass string, I need to go and fix this crap later. 
+            #SHIT that is one long ass string, I need to go and fix this crap later.
             msg = '\n```Unturned Statistics\n\n\nPlayer Name: ' + steamname + "\nSteamID64: " + str(player) + "\n\n--- Kills & Deaths ---\n\nKills: " + str(playerskilled) + "\nDeaths: " + str(playerdeaths) + "\nKill/Death Ratio: " + str(killdeath) + "\n\n--- Firearms ---\n\nRounds Fired: " + str(shotstaken) + "\nBullets Hit: "+str(shotshit) + "\nAccuracy: " + str(accuracy) + "%\nHeadshots Hit: " + str(headshotshit) + "\nHeadshot Rate: " + str(headshotrate) + "%\n\n--- Zombies ---" + "\n\nZombies Killed: " + str(zombieskilled) + "\nMega Zombies Killed: " + str(megaskilled) + "\n\n--- Arena ---\n\nArena Wins: " + str(arenawins) + "```"
             await self.bot.say(msg)
         except:
@@ -138,7 +144,6 @@ class games():
         playcount = data['playcount']
         totalscore = data['total_score']
         pprank = data['pp_rank']
-        level = round(float(data['level']), 2)
         rawpp = data['pp_raw']
         accuracy = round(float(data['accuracy']), 2)
         country = data['country']
@@ -204,11 +209,17 @@ class games():
     @commands.command(pass_context=True)
     @commands.cooldown(1, 8, type=commands.BucketType.channel)
     async def unturnedprice(self, ctx, *, query):
+        """Grabs price of unturned items from steam market"""
+        
         data = await parse_item_data(query)
         
         if not data:
-            await self.bot.say('No items were found for ``{}``'.format(query))
-            return
+            if data is None:
+                await self.bot.say('No items were found for ``{}``'.format(query))
+                return
+            if data is False:
+                await self.bot.say('Error processing request. Try again later.'.format(query))
+                return
 
         embed = discord.Embed(title=data['Name'], url='http://steamcommunity.com/market/listings/304930/{}'.format(data['url_enc'])) \
             .add_field(name='Price', value=data['Price'], inline=False) \
@@ -217,7 +228,7 @@ class games():
 
 
         await self.bot.say(embed=embed)
-                
+        
 
 def setup(bot):
     bot.add_cog(games(bot))
