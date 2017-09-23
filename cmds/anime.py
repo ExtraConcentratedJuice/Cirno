@@ -277,7 +277,7 @@ class anime():
             await self.bot.say('Discord doesn\'t support webms in embeds, and it looks like there were no other images that aren\'t webms. Here is the image that was found:\n\nhttp:{}'.format(img['file_url']))
             return
         
-        weebimg = ("https:{0}".format(img['file_url']))
+        weebimg = img['file_url']
         weebembed = discord.Embed(title='tags: ' + imgtags, description='``' + textwrap.fill(weebimg, 38) + '``') \
         .set_image(url=weebimg) \
         .set_footer(text='https://gelbooru.com', icon_url='http://i.imgur.com/UVGcJdK.png')
@@ -366,7 +366,7 @@ class anime():
         animelink = animelinks.get(animetitle.lower())
         stream_success = True
         
-        if animelink == None:
+        if animelink is None:
             stream_success = False
             for k, v in animelinks.items():
                 if distance.levenshtein(animetitle.lower(), k.lower()) < 2:
@@ -463,7 +463,7 @@ class anime():
         themelink = themedata.get(animetitle.lower())
         theme_success = True
         
-        if themelink == None:
+        if themelink is None:
             theme_success = False
             for k, v in themedata.items():
                 #Levenshtein comparison to account for small errors in names.
