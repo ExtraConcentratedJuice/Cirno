@@ -60,9 +60,9 @@ async def on_message(message):
 @bot.event
 async def on_command_error(error, ctx):
     if isinstance(error, commands.MissingRequiredArgument):
-        await bot.send_message(ctx.message.channel, '``Error | Missing argument(s). Please refer to !help for usage.``')
+        await bot.send_message(ctx.message.channel, '``Error | Missing argument(s). Please refer to {}help for usage.``'.format(config['prefix']))
     elif isinstance(error, commands.CommandOnCooldown):
-        await bot.send_message(ctx.message.channel, '``Error | You\'ve used this command way too fast, try again in {} seconds.``'.format(round(error.retry_after, 2)))
+        await bot.send_message(ctx.message.channel, '``Error | This command was used way too fast, try again in {} seconds.``'.format(round(error.retry_after, 2)))
     elif isinstance(error, commands.BadArgument):
         await bot.send_message(ctx.message.channel, '``Error | Bad argument(s).``')
     elif isinstance(error, commands.TooManyArguments):

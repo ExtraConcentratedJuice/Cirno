@@ -63,6 +63,7 @@ async def parse_item_data(query):
     return item
 
 class games():
+    
     def __init__(self, bot):
         self.bot = bot
 
@@ -169,6 +170,7 @@ class games():
     @commands.cooldown(1, 20, type=commands.BucketType.channel)
     async def query(self, ctx, server):
         """Queries an Unturned server"""
+        
         if server == 'rekt':
             await self.bot.say('does not exist anymore, and is never coming back')
             return

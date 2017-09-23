@@ -303,8 +303,10 @@ class general():
                         return
                 except:
                     pass
+                
                 await self.bot.say('``/r/{}`` is quarantined. No way I am posting shit from there.'.format(subreddit))
                 return
+            
         except KeyError:
             pass
 
@@ -315,6 +317,11 @@ class general():
         subreddit = data['data']['url']
 
         data = await GET('https://www.reddit.com/r/{}/hot/.json'.format(cleanurl), {'limit' : '25'})
+        
+        if len(data['data']['children']) == 0:
+            await self.bot.say('No posts to retrieve, this is a ghost town.')
+            return
+
         #'len - 2' to account for some extra objects in 'children'
         postlen = len(data['data']['children']) - 2
         objectid = (random.randint(0, postlen))
@@ -329,7 +336,7 @@ class general():
 
         url = 'https://reddit.com{}'.format(content['permalink'])
         embed = discord.Embed(title=content['title'], url=url, description=content['selftext'] if content['selftext_html'] else None) \
-                .set_footer(text='{}, retrieved {}'.format(subreddit, time.strftime("%d/%m/%Y")), icon_url='http://i.magaimg.net/img/19y2.png')
+                .set_footer(text='{}, retrieved {}'.format(subreddit, time.strftime("%%m/%d/%Y")), icon_url='http://i.magaimg.net/img/19y2.png')
 
         if content['thumbnail']:
             embed.set_image(url=content['thumbnail'])
@@ -340,10 +347,12 @@ class general():
             try:
                 if content['media']['oembed']:
                     embed = discord.Embed(title=content['title'], url=url, description='\n[' + content['url'] + '](' + content['url'] + ')') \
-                    .set_footer(text='{}, retrieved {}'.format(subreddit, time.strftime("%d/%m/%Y")), icon_url='http://i.magaimg.net/img/19y2.png')
+                    .set_footer(text='{}, retrieved {}'.format(subreddit, time.strftime("%%m/%d/%Y")), icon_url='http://i.magaimg.net/img/19y2.png')
                     embed.set_image(url=content['media']['oembed']['thumbnail_url'])
             except:
                 pass
+
+        #PLS IMGUR ALUBM THUMBNAILS WORK PLS
 
         if not content['media_embed'] and not content['is_self']:
             embed = discord.Embed(title=content['title'], url=url, description='\n[' + content['url'] + '](' + content['url'] + ')') \
@@ -359,14 +368,14 @@ class general():
                 try:
                     if content['media']['oembed']:
                         embed = discord.Embed(title=content['title'], url=url, description='\n[' + content['url'] + '](' + content['url'] + ')') \
-                        .set_footer(text='{}, retrieved {}'.format(subreddit, time.strftime("%d/%m/%Y")), icon_url='http://i.magaimg.net/img/19y2.png')
+                        .set_footer(text='{}, retrieved {}'.format(subreddit, time.strftime("%m/%d/%Y")), icon_url='http://i.magaimg.net/img/19y2.png')
                         embed.set_image(url=content['media']['oembed']['thumbnail_url'])
                 except:
                     pass
 
         if content['is_self']:
             embed = discord.Embed(title=content['title'], url=url, description=content['selftext'] if content['selftext_html'] else None) \
-            .set_footer(text='{}, retrieved {}'.format(subreddit, time.strftime("%d/%m/%Y")), icon_url='http://i.magaimg.net/img/19y2.png')
+            .set_footer(text='{}, retrieved {}'.format(subreddit, time.strftime("%m/%d/%Y")), icon_url='http://i.magaimg.net/img/19y2.png')
             
 
         #This is all just for code obfuscation! Yeah. Obfuscation. I totally did think how I would implement this before doing it!
