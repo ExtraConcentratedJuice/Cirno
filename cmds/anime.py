@@ -60,7 +60,7 @@ class anime():
     creds = spice.init_auth(config['MALAuth']['username'], config['MALAuth']['password'])
 
     @commands.command(pass_context=True)
-    @commands.cooldown(5, 6, type=commands.BucketType.channel)
+    @commands.cooldown(3, 3, type=commands.BucketType.channel)
     async def animeimg(self, ctx, *, imgtag):
         """Gives you an anime image."""
 
@@ -81,15 +81,26 @@ class anime():
         except KeyError:
             await self.bot.say('Danbooru has a limitation on tags. Please use only one tag.')
             return
-        
-        animeimg = ("https://danbooru.donmai.us{}".format(img['file_url']))
+
+        try:
+            animeimg = ('https://danbooru.donmai.us{}'.format(img['file_url']))
+        except KeyError:
+            for i in range(10):
+                img = random.choice(imagelist)
+                if img.get('file_url'):
+                    break
+            if not img.get('file_url'):
+                await self.bot.say('No images were found for ``{}``. Try another tag.'.format(imgtag))
+                return
+            animeimg = ('https://danbooru.donmai.us{}'.format(img['file_url']))
+            
         embed = discord.Embed(title='tag: '+imgtag) \
         .set_image(url=animeimg) \
         .set_footer(text='https://danbooru.donmai.us', icon_url='http://i.imgur.com/4Wjm9rb.png')
         await self.bot.say(embed=embed)
 
     @commands.command(pass_context=True)
-    @commands.cooldown(5, 6, type=commands.BucketType.channel)
+    @commands.cooldown(3, 3, type=commands.BucketType.channel)
     async def hentaiimg(self, ctx, *, imgtag):
         """No."""
         
@@ -115,9 +126,19 @@ class anime():
             await self.bot.say('Danbooru has a limitation on tags. Please use only one tag.')
             return
 
-        hentaiimg = ("https://danbooru.donmai.us{}".format(img['file_url']))
+        try:
+            hentaiimg = ('https://danbooru.donmai.us{}'.format(img['file_url']))
+        except KeyError:
+            for i in range(10):
+                img = random.choice(imagelist)
+                if img.get('file_url'):
+                    break
+            if not img.get('file_url'):
+                await self.bot.say('No images were found for ``{}``. Try another tag.'.format(imgtag))
+                return
+            hentaiimg = ('https://danbooru.donmai.us{}'.format(img['file_url']))
         
-        embed = discord.Embed(title='tag: '+imgtag) \
+        embed = discord.Embed(title='tag: '+ imgtag) \
         .set_image(url=hentaiimg) \
         .set_footer(text='https://danbooru.donmai.us', icon_url='http://i.imgur.com/4Wjm9rb.png')
         await self.bot.say(embed=embed)
@@ -212,7 +233,7 @@ class anime():
         await self.bot.say(embed=thiccembed)
 
     @commands.command(pass_context=True)
-    @commands.cooldown(2, 5, type=commands.BucketType.channel)
+    @commands.cooldown(2, 6, type=commands.BucketType.channel)
     async def weebsearch(self, ctx, *, imgtags):
         """A command to search for stuff on the yande.re imageboard."""
         
@@ -278,7 +299,8 @@ class anime():
             return
         
         weebimg = img['file_url']
-        weebembed = discord.Embed(title='tags: ' + imgtags, description='``' + textwrap.fill(weebimg, 38) + '``') \
+        weeblink = 'https://gelbooru.com/index.php?page=post&s=view&id={}'.format(img['id'])
+        weebembed = discord.Embed(title='tags: ' + imgtags, description='``' + textwrap.fill(weeblink, 38) + '``') \
         .set_image(url=weebimg) \
         .set_footer(text='https://gelbooru.com', icon_url='http://i.imgur.com/UVGcJdK.png')
         await self.bot.say(embed=weebembed)
@@ -311,7 +333,7 @@ class anime():
         await self.bot.say(embed=animeinfo)
 
     @commands.command(pass_context=True)
-    @commands.cooldown(3, 8, type=commands.BucketType.channel)
+    @commands.cooldown(3, 12, type=commands.BucketType.channel)
     async def animestream(self, ctx, *, animename):
         """Gets you an illegal anime stream"""
 
