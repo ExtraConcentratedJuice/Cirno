@@ -71,11 +71,12 @@ class general():
         """Help command"""
         await self.bot.add_reaction(ctx.message, '\U0001F44C')
         #lol i need to fix the spacing
-        embedhelp = discord.Embed(color = 0x870c0f, description = 'I am a gay multi-purpose Discord bot created by ExtraConcentratedJuice. Multi-purpose may be an overstatement though, because I am completely useless. Extra is absolutely terrible at code, so expect me to be mildly retarded at times.\n\nAll commands have a 3.5 second cooldown.\n\nCertain commands have been omitted from this manual due to their potential for abuse or their completely inane nature.') \
+        embedhelp = discord.Embed(color = 0x870c0f, description = 'I am a gay multi-purpose Discord bot created by ExtraConcentratedJuice. Multi-purpose may be an overstatement though, because I am completely useless. Extra is absolutely terrible at code, so expect me to be mildly retarded at times.\n\nAll commands have a cooldown.\n\nCertain commands have been omitted from this manual due to their potential for abuse or their completely inane nature.') \
                     .set_author(name = '𝔗𝔥𝔢 𝔒𝔣𝔣𝔦𝔠𝔦𝔞𝔩 ℜ𝔬𝔟𝔬-𝔉ü𝔥𝔯𝔢𝔯 𝔐𝔞𝔫𝔲𝔞𝔩', url = 'https://harpy.cf', icon_url = self.bot.user.avatar_url) \
                     .set_thumbnail(url = 'https://i.imgur.com/qHytgB2.png') \
                     .add_field(name = "__**General Purpose**__", value = 'The usual commands. Satisfaction not guaranteed.', inline = False) \
                     .add_field(name = pr + "``rfhello``", value = 'Useless command that will work 100% of the time to check if the bot is alive.', inline = False) \
+                    .add_field(name = pr + "``reverseimage``", value = 'Reverse image search. ADD IMAGE AS AN ATTACHMENT, COMMAND AS COMMENT. Alternatively, you can pass a direct link to an image as an argument. (e.g. r%reverseimage ``https://meme.com/meme.jpg``)', inline = False) \
                     .add_field(name = pr + "``commonwords (#channel) (days) (number of words)``", value = 'Gives you a list of commonly used words in a channel, according to your parameters.', inline = False) \
                     .add_field(name = pr + "``reddit (subreddit, e.g. The_Donald)``", value = 'Grabs a post from the front page of the specified subreddit.', inline = False) \
                     .add_field(name = pr + "``russianroulette``", value = 'Shoot yourself.', inline = False) \
@@ -410,6 +411,45 @@ class general():
         
         embed = await reddit_image('ImGoingToHellForThis', random.choice(MEMES), 'meme')
         await self.bot.say(embed=embed)
+
+    @commands.command(pass_context=True)
+    @commands.cooldown(2, 8, type=commands.BucketType.channel)
+    async def reverseimage(self, ctx, imgurl=None):
+        """Gives a link for Google reverse image search."""
+        msg = ctx.message
+        imgerror = 'You did not seem to attach an image. ' \
+                    'Please send an image with this command as a comment, or ' \
+                    'send this command with an url to the image as an argument.'
+                    
+        if not imgurl:
+            
+            try:
+                attachments = msg.attachments[0]
+            except IndexError:
+                await self.bot.say(imgerror)
+                return
+            
+            if not attachments.get('width'):
+                await self.bot.say(imgerror)
+                return
+            imgurl = requests.compat.quote(attachments.get('url'))
+            url = 'https://images.google.com/searchbyimage?image_url={}'.format(imgurl)
+            embed = discord.Embed(title='Reverse Image Search', url=url, description='\n\n[Reverse image search]({}) for {}\'s [image]({}).'.format(url, ctx.message.author, attachments.get('url'))) \
+            .set_footer(text='Google Reverse Image Search', icon_url='https://i.imgur.com/9Z5KGBX.png') \
+            .set_thumbnail(url=attachments.get('url'))
+
+        else:
+            regex = re.compile(r'\.(jpeg|png|jpg)')
+            if not regex.search(imgurl):
+                await self.bot.say('That doesn\'t seem to be a valid image. Link directly to an image (e.g. https://meme.com/meme.jpg)')
+                return
+            img_url = requests.compat.quote(imgurl)
+            url = 'https://images.google.com/searchbyimage?image_url={}'.format(img_url)
+            embed = discord.Embed(title='Reverse Image Search', url=url, description='\n\n[Reverse image search]({}) for {}\'s image.'.format(url, ctx.message.author, img_url)) \
+            .set_footer(text='Google Reverse Image Search', icon_url='https://i.imgur.com/9Z5KGBX.png') \
+            
+        await self.bot.say(embed=embed)
+
         
 def setup(bot):
     bot.add_cog(general(bot))
