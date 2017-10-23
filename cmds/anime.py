@@ -182,7 +182,7 @@ class anime():
             .set_footer(text='https://danbooru.donmai.us', icon_url='http://i.imgur.com/4Wjm9rb.png')
             await self.bot.send_message(ctx.message.author, embed=embed)
             
-        await self.bot.say('Check your inbox for some fresh hentai, '+ ctx.message.author.mention + '.')
+        await self.bot.say('Check your inbox for some fresh ``{}`` hentai, {}.'.format(imgtag, ctx.message.author.mention))
 
     @commands.command(pass_context=True)
     @commands.cooldown(3, 3, type=commands.BucketType.channel)
@@ -222,6 +222,26 @@ class anime():
         """T H I C C bitches"""
 
         params = {'tags' : 'curvy rating:safe', 'limit' : 5, 'random' : 'true'}
+
+        imagelist = await self.fetchlist('danbooru', params)
+        img = random.choice(imagelist)
+        thiccimg = ("https://danbooru.donmai.us{}".format(img['file_url']))
+        
+        thiccembed = discord.Embed(title='T H I C C') \
+        .set_image(url=thiccimg) \
+        .set_footer(text='https://danbooru.donmai.us', icon_url='http://i.imgur.com/4Wjm9rb.png')
+        await self.bot.say(embed=thiccembed)
+
+    @commands.command(pass_context=True)
+    @commands.cooldown(3, 3, type=commands.BucketType.channel)
+    async def thiccbitches(self, ctx):
+        """T H I C C bitches"""
+        
+        if 'nsfw' not in ctx.message.channel.name:
+            await self.bot.say('You must be in a channel with ``nsfw`` in it\'s name to see those T H I C C bitches.')
+            return
+        
+        params = {'tags' : 'curvy rating:explicit', 'limit' : 5, 'random' : 'true'}
 
         imagelist = await self.fetchlist('danbooru', params)
         img = random.choice(imagelist)

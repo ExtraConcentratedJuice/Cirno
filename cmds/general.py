@@ -59,6 +59,9 @@ with open("config.yaml", 'r') as f:
 pr = config['prefix']
 MEMES = ['bad meme', 'good meme', 'shitty meme', 'stupid meme', 'weak meme', 'strong meme']
 
+bletters = {'a': 'ɐ', 'b': 'q', 'c': 'ɔ', 'd': 'p', 'e': 'ǝ', 'f': 'ɟ', 'g': 'ƃ', 'h': 'ɥ', 'i': 'ᴉ', 'j': 'ɾ', 'k': 'ʞ', 'l': 'l', 'm': 'ɯ','n': 'u', 'o': 'o',
+            'p': 'd', 'q': 'b', 'r': 'ɹ', 's': 's', 't': 'ʇ', 'u': 'n', 'v': 'ʌ', 'w': 'ʍ', 'x': 'x', 'y': 'ʎ', 'x': 'x', 'z': 'z'}
+            
 class general():
     
     def __init__(self, bot):
@@ -128,10 +131,22 @@ class general():
                     .add_field(name = pr + "``user (@user)``", value = 'Gives information about a mentioned user.', inline = False) \
                     .add_field(name = pr + "``reportissue (issue)``", value = 'Reports an issue. Suggestions are also welcome. If you misuse this command, you will be niggered.', inline = False) \
                     .set_footer(text= "Robo-Führer, by ExtraConcentratedJuice", icon_url = 'https://i.imgur.com/ItO8dUz.png')
+        embednsfw = discord.Embed(color = 0x870c0f, description = 'NSFW Section of the manual. Will only work in channels labeled with ``nsfw``.') \
+                    .set_author(name = '𝔗𝔥𝔢 𝔒𝔣𝔣𝔦𝔠𝔦𝔞𝔩 ℜ𝔬𝔟𝔬-𝔉ü𝔥𝔯𝔢𝔯 𝔐𝔞𝔫𝔲𝔞𝔩, Hidden Section', url = 'https://harpy.cf', icon_url = self.bot.user.avatar_url) \
+                    .set_thumbnail(url = 'https://i.imgur.com/qHytgB2.png') \
+                    .add_field(name = "__**N S F W  H e n t a i**__", value = 'Shit, people asked me to make this. They forced me to! I had no choice.', inline = False) \
+                    .add_field(name = pr + "``hentaibomb <tag>``", value = 'DMs 3-8 images of the tag of your choosing.', inline = False) \
+                    .add_field(name = pr + "``hentaiimg <tag>``", value = 'Retrieves one image of the tag of your choosing.', inline = False) \
+                    .add_field(name = pr + "``thiccbitches``", value = 'T H I C C bitches.', inline = False) \
+                    .add_field(name = pr + "``weebsearch (tag1 tag2 character_name) (rating:explicit)``", value = 'Add rating:explicit to your tags to grab explicit images.', inline = False) \
+                    .add_field(name = pr + "``gelbooru (tag1 character_name) (rating:explicit)``", value = 'Add rating:explicit to your tags to grab explicit images.', inline = False) \
+                    .set_footer(text= "Robo-Führer, by ExtraConcentratedJuice", icon_url = 'https://i.imgur.com/ItO8dUz.png')
 
         await self.bot.send_message(ctx.message.author, embed=embedhelp)
         await self.bot.send_message(ctx.message.author, embed=embedhelp2)
         await self.bot.send_message(ctx.message.author, embed=embedhelp3)
+        if 'nsfw' in ctx.message.channel.name:
+            await self.bot.send_message(ctx.message.author, embed=embednsfw)
         
     
 
@@ -411,6 +426,56 @@ class general():
         
         embed = await reddit_image('ImGoingToHellForThis', random.choice(MEMES), 'meme')
         await self.bot.say(embed=embed)
+
+    @commands.command(pass_context=True)
+    @commands.cooldown(2, 8, type=commands.BucketType.channel)
+    async def fuckmeup(self, ctx, *, contents):
+        """messes up your text"""
+        regex = re.compile(r'[A-z]')
+        if regex.match(contents):
+            newmsg = []
+            for c in reversed(contents):
+                newmsg.append(bletters.get(c.lower(), c))
+        else:
+            await self.bot.say('LETTERS ONLY, BUDDY.')
+            return
+        await self.bot.say(''.join(newmsg))
+
+    @commands.command(pass_context=True)
+    @commands.cooldown(2, 8, type=commands.BucketType.channel)
+    async def unfuck(self, ctx, *, contents):
+        """unmesses up your text"""
+        newmsg = []
+        for c in reversed(contents):
+            newletter = [k for k, v in bletters.items() if v == c]
+            if not newletter:
+                newletter = c
+            else:
+                newletter = newletter[0]
+            newmsg.append(newletter)
+        await self.bot.say(''.join(newmsg))
+
+    @commands.command(pass_context=True)
+    @commands.cooldown(2, 8, type=commands.BucketType.channel)
+    async def emojify(self, ctx, *, contents):
+        """dont use this"""
+        newmsg = []
+        for w in contents.split():
+            newletter = [k for k, v in bletters.items() if random]
+            if not newletter:
+                newletter = c
+            else:
+                newletter = newletter[0]
+            newmsg.append(newletter)
+        await self.bot.say(''.join(newmsg))
+
+    @commands.command(pass_context=True)
+    @commands.cooldown(2, 8, type=commands.BucketType.channel)
+    async def emojis(self, ctx):
+        """dont use this"""
+        for w in self.bot.get_all_emojis():
+            if w.name == 'wolf':
+                print(w.name,w.id,w.server)
 
     @commands.command(pass_context=True)
     @commands.cooldown(2, 8, type=commands.BucketType.channel)
