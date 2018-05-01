@@ -6,7 +6,7 @@ using Discord;
 using System.Linq;
 using CirnoBot.Http;
 
-namespace CirnoBot.Commands
+namespace CirnoBot.Commands.Imageboard
 {
     public class CommandCountDanbooru : CirnoCommand
     {
@@ -37,7 +37,7 @@ namespace CirnoBot.Commands
             tagList.RemoveAll(x => x.Contains(":"));
             tagList.AddRange(sortParams);
 
-            string tags = String.Join(' ', tagList.ToArray());
+            string tags = String.Join(" ", tagList.ToArray());
 
             if (tagList.Count > 2)
             {

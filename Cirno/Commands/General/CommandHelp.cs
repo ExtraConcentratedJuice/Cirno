@@ -4,7 +4,7 @@ using System.Text;
 using Discord.WebSocket;
 using Discord;
 
-namespace CirnoBot.Commands
+namespace CirnoBot.Commands.General
 {
     public class CommandHelp : CirnoCommand
     {

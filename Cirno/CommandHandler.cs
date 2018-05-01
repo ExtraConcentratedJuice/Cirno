@@ -45,7 +45,15 @@ namespace CirnoBot
                 x.Aliases.Any(z => String.Equals(z, cmd.Substring(bot.Configuration.Prefix.Length))));
 
             if (command != null)
-                command.Invoke(new CommandContext(message, bot, new CirnoContext(bot.Configuration.ConnectionString)), args.ToArray());
+                try
+                {
+                    command.Invoke(new CommandContext(message, bot, new CirnoContext(bot.Configuration.ConnectionString)), args.ToArray());
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e.ToString());
+                    await message.Channel.SendMessageAsync($"An exception occurred while attempting to execute this command. Report this issue with the {bot.Configuration.Prefix}issue command."); 
+                }
         }
     }
 }

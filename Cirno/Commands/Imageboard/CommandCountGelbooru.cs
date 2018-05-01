@@ -6,7 +6,7 @@ using Discord;
 using System.Linq;
 using CirnoBot.Http;
 
-namespace CirnoBot.Commands
+namespace CirnoBot.Commands.Imageboard
 {
     public class CommandCountGelbooru : CirnoCommand
     {

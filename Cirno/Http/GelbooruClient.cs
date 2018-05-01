@@ -63,6 +63,7 @@ namespace CirnoBot.Http
             query["page"] = "dapi";
             query["s"] = "post";
             query["q"] = "index";
+            query["pid"] = page.ToString();
             query["limit"] = limit.ToString();
             query["json"] = "1";
 

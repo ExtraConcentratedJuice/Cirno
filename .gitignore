@@ -261,3 +261,4 @@ __pycache__/
 *.pyc
 /Cirno/config.json
 /Cirno/database.db
+/Cirno/Properties/PublishProfiles
