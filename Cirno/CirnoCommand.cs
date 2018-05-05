@@ -3,6 +3,7 @@ using Discord.WebSocket;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace CirnoBot
 {
@@ -16,6 +17,6 @@ namespace CirnoBot
         public virtual bool IsHidden { get => false; }
         public Dictionary<ulong, DateTime> CooldownTable { get; } = new Dictionary<ulong, DateTime>();
 
-        public abstract void Invoke(CommandContext ctx, string[] args);
+        public abstract Task Invoke(CommandContext ctx, string[] args);
     }
 }

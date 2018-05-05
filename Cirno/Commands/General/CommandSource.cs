@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using Discord.WebSocket;
 using Discord;
+using System.Threading.Tasks;
 
 namespace CirnoBot.Commands.General
 {
@@ -22,7 +23,7 @@ namespace CirnoBot.Commands.General
 
         #endregion
 
-        public override async void Invoke(CommandContext ctx, string[] args) =>
+        public override async Task Invoke(CommandContext ctx, string[] args) =>
             await ctx.ReplyAsync("https://github.com/extraconcentratedjuice/Cirno");
     }
 }

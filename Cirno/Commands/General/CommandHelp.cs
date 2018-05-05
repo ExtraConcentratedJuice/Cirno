@@ -4,6 +4,7 @@ using System.Text;
 using Discord.WebSocket;
 using Discord;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace CirnoBot.Commands.General
 {
@@ -23,7 +24,7 @@ namespace CirnoBot.Commands.General
 
         #endregion
 
-        public override async void Invoke(CommandContext ctx, string[] args)
+        public override async Task Invoke(CommandContext ctx, string[] args)
         {
             var commands = ctx.Bot.Commands.Commands.GroupBy(x => x.GetType().Namespace.Split('.').Last().Trim(' ').Trim(','));
 

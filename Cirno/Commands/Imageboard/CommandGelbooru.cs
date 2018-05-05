@@ -5,6 +5,8 @@ using Discord.WebSocket;
 using System.Linq;
 using Discord;
 using CirnoBot.Http;
+using System.Threading.Tasks;
+using System.Net.Http;
 
 namespace CirnoBot.Commands.Imageboard
 {
@@ -24,7 +26,7 @@ namespace CirnoBot.Commands.Imageboard
 
         #endregion
 
-        public override async void Invoke(CommandContext ctx, string[] args)
+        public override async Task Invoke(CommandContext ctx, string[] args)
         {
             if (args.Length < 1)
             {
@@ -49,7 +51,14 @@ namespace CirnoBot.Commands.Imageboard
 
             var client = new GelbooruClient(ctx.DbContext);
 
-            int count = await client.GetImageCountAsync(tags);
+            int count;
+            try { count = await client.GetImageCountAsync(tags); }
+            catch (HttpRequestException e)
+            {
+                Console.WriteLine(e.ToString());
+                await ctx.ReplyAsync("The request to the API failed. Looks like the service might be down, try again later.");
+                return;
+            }
 
             if (count < 1)
             {
@@ -63,7 +72,14 @@ namespace CirnoBot.Commands.Imageboard
 
             int page = r.Next(count / limit > 1000 ? 1000 : count / limit);
 
-            Dictionary<int, string> urls = await client.GetPostsAsync(tags, page, limit);
+            Dictionary<int, string> urls;
+            try { urls = await client.GetPostsAsync(tags, page, limit); }
+            catch (HttpRequestException e)
+            {
+                Console.WriteLine(e.ToString());
+                await ctx.ReplyAsync("The request to the API failed. Looks like the service might be down, try again later.");
+                return;
+            }
 
             if (urls.Count < 1)
             {

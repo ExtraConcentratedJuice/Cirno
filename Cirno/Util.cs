@@ -3,6 +3,7 @@ using Discord.WebSocket;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Text;
 
 namespace CirnoBot
@@ -13,6 +14,9 @@ namespace CirnoBot
 
         public static string GenerateInvalidUsage(CirnoBot bot, CirnoCommand command) =>
             $"Invalid parameters.\nUsage: ``{bot.Configuration.Prefix}{command.Syntax}``";
+
+        public static int GuildCount(CirnoBot bot) =>
+            bot.Client.Guilds.Count;
 
         public static SocketTextChannel ParseTextChannel(string channel, DiscordSocketClient client) =>
             ulong.TryParse(new String(channel.Where(x => Char.IsDigit(x)).ToArray()), out ulong cId) ? client.GetChannel(cId) as SocketTextChannel : null;

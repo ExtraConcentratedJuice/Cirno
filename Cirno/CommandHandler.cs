@@ -53,11 +53,11 @@ namespace CirnoBot
                     return;
                 }
 
-                try { command.Invoke(new CommandContext(message, bot, new CirnoContext(bot.Configuration.ConnectionString)), args.ToArray()); }
+                try { await command.Invoke(new CommandContext(message, bot, new CirnoContext(bot.Configuration.ConnectionString)), args.ToArray()); }
                 catch (Exception e)
                 {
                     Console.WriteLine(e.ToString());
-                    await message.Channel.SendMessageAsync($"An exception occurred while attempting to execute this command. Report this issue with the {bot.Configuration.Prefix}issue command.");
+                    await message.Channel.SendMessageAsync($"An exception occurred while attempting to execute this command. Report this issue with ``{bot.Configuration.Prefix}issue <issue>``.");
                 }
                 finally
                 {

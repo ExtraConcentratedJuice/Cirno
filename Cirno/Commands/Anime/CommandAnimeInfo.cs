@@ -8,6 +8,8 @@ using CirnoBot.Entities;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Web;
+using System.Threading.Tasks;
+using System.Net.Http;
 
 namespace CirnoBot.Commands.Anime
 {
@@ -27,7 +29,7 @@ namespace CirnoBot.Commands.Anime
 
         #endregion
 
-        public override async void Invoke(CommandContext ctx, string[] args)
+        public override async Task Invoke(CommandContext ctx, string[] args)
         {
             if (args.Length < 1)
             {
@@ -45,15 +47,22 @@ namespace CirnoBot.Commands.Anime
 
             var client = new MALClient(ctx.Bot.Configuration.MALUsername, ctx.Bot.Configuration.MALPassword);
 
-            List<MALAnimeEntry> results = await client.SearchAnimeAsync(animeName);
+            
 
-            if (results == null)
+            MALAnimeEntry entry;
+            try { entry = await client.FirstAnimeAsync(animeName); }
+            catch (HttpRequestException e)
+            {
+                Console.WriteLine(e.ToString());
+                await ctx.ReplyAsync("The request to the API failed. Looks like the service might be down, try again later.");
+                return;
+            }
+
+            if (entry == null)
             {
                 await ctx.ReplyAsync("No results were found for your query.");
                 return;
             }
-
-            MALAnimeEntry entry = await client.FirstAnimeAsync(animeName);
 
             string desc = HttpUtility.HtmlDecode(Regex.Replace(entry.Synopsis, @"<(?:[^>=]|='[^']*'|=""[^""]*""|=[^'""][^\s>]*)*>", ""));
 

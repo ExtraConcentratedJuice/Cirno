@@ -19,9 +19,9 @@ namespace CirnoBot
         {
             Configuration = JsonConvert.DeserializeObject<Configuration>(File.ReadAllText("config.json"));
 
-            Client = new DiscordSocketClient(new DiscordSocketConfig()
+            Client = new DiscordSocketClient(new DiscordSocketConfig
             {
-                LogLevel = LogSeverity.Info,
+                LogLevel = LogSeverity.Verbose,
                 WebSocketProvider = Discord.Net.Providers.WS4Net.WS4NetProvider.Instance
             });
 
