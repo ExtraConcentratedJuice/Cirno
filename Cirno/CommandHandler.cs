@@ -28,7 +28,16 @@ namespace CirnoBot
             Commands = Commands.OrderBy(x => x.Name).ToList();
         }
 
-        public async Task OnMessage(SocketMessage message)
+        private async Task HandleExceptionAsync(CommandException e)
+        {
+            if (e == null)
+                return;
+
+            Console.WriteLine(e.Exception.ToString());
+            await e.Context.ReplyAsync($"An exception occurred while attempting to execute this command. Report this issue with ``{bot.Configuration.Prefix}issue <issue>``.");
+        }
+
+        public async Task OnMessageAsync(SocketMessage message)
         {
             string content = message.Content;
             SocketUser user = message.Author;
@@ -41,29 +50,16 @@ namespace CirnoBot
             string cmd = args[0];
             args.RemoveAt(0);
 
-            CirnoCommand command = Commands.FirstOrDefault(x => 
+            CirnoCommand command = Commands.FirstOrDefault(x =>
                 String.Equals(x.Name, cmd.Substring(bot.Configuration.Prefix.Length), StringComparison.OrdinalIgnoreCase) ||
                 x.Aliases.Any(z => String.Equals(z, cmd.Substring(bot.Configuration.Prefix.Length))));
 
             if (command != null)
             {
-                if (command.CooldownTable.ContainsKey(user.Id) && (DateTime.Now - command.CooldownTable[user.Id]).TotalSeconds < command.Cooldown)
-                {
-                    await message.Channel.SendMessageAsync($"You are on cooldown for this command. Seconds remaining: {(int)(command.Cooldown - (DateTime.Now - command.CooldownTable[user.Id]).TotalSeconds)}");
-                    return;
-                }
+                Task task = Task.Run(async () =>
+                    await command.InvokeInternalAsync(new CommandContext(message, bot, new CirnoContext(bot.Configuration.ConnectionString)), args.ToArray()));
 
-                try { await command.Invoke(new CommandContext(message, bot, new CirnoContext(bot.Configuration.ConnectionString)), args.ToArray()); }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e.ToString());
-                    await message.Channel.SendMessageAsync($"An exception occurred while attempting to execute this command. Report this issue with ``{bot.Configuration.Prefix}issue <issue>``.");
-                }
-                finally
-                {
-                    if (command.Cooldown > 0)
-                        command.CooldownTable[user.Id] = DateTime.Now;
-                }
+                await task.ContinueWith(async t => await HandleExceptionAsync(t.Exception.Flatten().InnerException as CommandException), TaskContinuationOptions.OnlyOnFaulted);
             }
         }
     }

@@ -53,7 +53,7 @@ namespace CirnoBot.Commands.General
 
         #endregion
 
-        public override async Task Invoke(CommandContext ctx, string[] args)
+        public override async Task InvokeAsync(CommandContext ctx, string[] args)
         {
             if (args.Length < 1)
             {

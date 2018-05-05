@@ -29,7 +29,7 @@ namespace CirnoBot
 
             Client.Log += async x => Console.WriteLine($"[{x.Severity.ToString()}] {x.Message}");
             Client.Ready += () => Client.SetGameAsync("c/help | cirYES", "https://twitch.tv/courierfive", ActivityType.Streaming);
-            Client.MessageReceived += Commands.OnMessage;
+            Client.MessageReceived += Commands.OnMessageAsync;
 
             await Client.LoginAsync(TokenType.Bot, Configuration.Token);
             await Client.StartAsync();

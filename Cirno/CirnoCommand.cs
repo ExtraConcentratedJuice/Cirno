@@ -17,6 +17,37 @@ namespace CirnoBot
         public virtual bool IsHidden { get => false; }
         public Dictionary<ulong, DateTime> CooldownTable { get; } = new Dictionary<ulong, DateTime>();
 
-        public abstract Task Invoke(CommandContext ctx, string[] args);
+        public abstract Task InvokeAsync(CommandContext ctx, string[] args);
+
+        internal async Task InvokeInternalAsync(CommandContext ctx, string[] args)
+        {
+            if (CooldownTable.ContainsKey(ctx.Author.Id) && (DateTime.Now - CooldownTable[ctx.Author.Id]).TotalSeconds < Cooldown)
+            {
+                await ctx.Channel.SendMessageAsync($"You are on cooldown for this command. Seconds remaining: {(int)(Cooldown - (DateTime.Now - CooldownTable[ctx.Author.Id]).TotalSeconds)}");
+                return;
+            }
+
+            try { await InvokeAsync(ctx, args); }
+            catch (Exception e) { throw new CommandException(ctx, e, this); }
+            finally
+            {
+                if (Cooldown > 0)
+                    CooldownTable[ctx.Author.Id] = DateTime.Now;
+            }
+        }
+    }
+
+    public class CommandException : Exception
+    {
+        public CommandContext Context { get; set; }
+        public Exception Exception { get; set; }
+        public CirnoCommand Command { get; set; }
+
+        public CommandException(CommandContext context, Exception exception, CirnoCommand command)
+        {
+            Context = context;
+            Exception = exception;
+            Command = command;
+        }
     }
 }

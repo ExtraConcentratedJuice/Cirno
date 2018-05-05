@@ -29,7 +29,7 @@ namespace CirnoBot.Commands.Anime
 
         #endregion
 
-        public override async Task Invoke(CommandContext ctx, string[] args)
+        public override async Task InvokeAsync(CommandContext ctx, string[] args)
         {
             if (args.Length < 1)
             {
@@ -46,8 +46,6 @@ namespace CirnoBot.Commands.Anime
             }
 
             var client = new MALClient(ctx.Bot.Configuration.MALUsername, ctx.Bot.Configuration.MALPassword);
-
-            
 
             MALAnimeEntry entry;
             try { entry = await client.FirstAnimeAsync(animeName); }

@@ -23,7 +23,7 @@ namespace CirnoBot.Commands.General
 
         #endregion
 
-        public override async Task Invoke(CommandContext ctx, string[] args) =>
+        public override async Task InvokeAsync(CommandContext ctx, string[] args) =>
             await ctx.ReplyAsync("https://github.com/extraconcentratedjuice/Cirno");
     }
 }

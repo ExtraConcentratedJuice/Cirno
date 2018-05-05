@@ -23,7 +23,7 @@ namespace CirnoBot.Commands.Other
 
         #endregion
 
-        public override async Task Invoke(CommandContext ctx, string[] args) =>
+        public override async Task InvokeAsync(CommandContext ctx, string[] args) =>
             await ctx.ReplyAsync("https://discordapp.com/oauth2/authorize?client_id=338414455291510785&scope=bot&permissions=201850055");
     }
 }

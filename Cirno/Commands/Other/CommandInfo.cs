@@ -23,7 +23,7 @@ namespace CirnoBot.Commands.Other
 
         #endregion
 
-        public override async Task Invoke(CommandContext ctx, string[] args) =>
+        public override async Task InvokeAsync(CommandContext ctx, string[] args) =>
             await ctx.ReplyAsync(new EmbedBuilder
             {
                 Color = Util.CyanColor,
