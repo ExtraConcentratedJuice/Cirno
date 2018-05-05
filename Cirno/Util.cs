@@ -14,17 +14,7 @@ namespace CirnoBot
         public static string GenerateInvalidUsage(CirnoBot bot, CirnoCommand command) =>
             $"Invalid parameters.\nUsage: ``{bot.Configuration.Prefix}{command.Syntax}``";
 
-        public static SocketTextChannel ParseChannel(string channel, DiscordSocketClient client)
-        {
-            if (ulong.TryParse(new String(channel.Where(x => Char.IsDigit(x)).ToArray()), out ulong cId))
-            {
-                return client.GetChannel(cId) as SocketTextChannel;
-            }
-            else
-                return null;
-
-        }
-
-
+        public static SocketTextChannel ParseTextChannel(string channel, DiscordSocketClient client) =>
+            ulong.TryParse(new String(channel.Where(x => Char.IsDigit(x)).ToArray()), out ulong cId) ? client.GetChannel(cId) as SocketTextChannel : null;
     }
 }

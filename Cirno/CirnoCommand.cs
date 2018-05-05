@@ -12,7 +12,9 @@ namespace CirnoBot
         public abstract string Description { get; }
         public abstract string Syntax { get; }
         public abstract List<string> Aliases { get; }
-        public abstract int Cooldown { get; }
+        public abstract float Cooldown { get; }
+        public virtual bool IsHidden { get => false; }
+        public Dictionary<ulong, DateTime> CooldownTable { get; } = new Dictionary<ulong, DateTime>();
 
         public abstract void Invoke(CommandContext ctx, string[] args);
     }

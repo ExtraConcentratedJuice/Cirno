@@ -18,7 +18,7 @@ namespace CirnoBot.Commands.General
 
         public override List<string> Aliases => new List<string> { "sauce" };
 
-        public override int Cooldown => 0;
+        public override float Cooldown => 4F;
 
         #endregion
 

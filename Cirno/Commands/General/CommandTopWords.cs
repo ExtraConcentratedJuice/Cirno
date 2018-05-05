@@ -13,13 +13,13 @@ namespace CirnoBot.Commands.General
 
         public override string Name => "topwords";
 
-        public override string Description => "Gets 10 of the top words within a channel.";
+        public override string Description => "Gets 30 of the top words within a channel.";
 
         public override string Syntax => "topwords <#channel>";
 
         public override List<string> Aliases => new List<string>();
 
-        public override int Cooldown => 0;
+        public override float Cooldown => 10F;
 
         #endregion
 
@@ -31,7 +31,7 @@ namespace CirnoBot.Commands.General
                 return;
             }
 
-            SocketTextChannel channel = Util.ParseChannel(args[0], ctx.Bot.Client);
+            SocketTextChannel channel = Util.ParseTextChannel(args[0], ctx.Bot.Client);
 
             if (channel == null)
             {
@@ -53,7 +53,7 @@ namespace CirnoBot.Commands.General
                     if ((DateTime.Now - messages.Current.Timestamp).TotalDays > 7)
                         break;
 
-                    string[] content = messages.Current.Content.Split(' ').Where(x => x.Length > 3).ToArray();
+                    string[] content = messages.Current.Content.Split(' ').Where(x => x.Length > 3 && x.Length < 25).ToArray();
 
                     foreach (string s in content)
                     {
@@ -70,7 +70,7 @@ namespace CirnoBot.Commands.General
                 }
             }
 
-            await ctx.ReplyAsync($"```Common words in #{channel.Name} in the past 7 days:\n{String.Join('\n', words.OrderByDescending(x => x.Value).Take(10).Select(x => $"\"{x.Key}\", {x.Value} times").ToArray())}```");
+            await ctx.ReplyAsync($"```Top 30 words in #{channel.Name} in the past 7 days:\n{String.Join('\n', words.OrderByDescending(x => x.Value).Take(30).Select(x => $"\"{x.Key}\", {x.Value} times").ToArray())}```");
         }
     }
 }

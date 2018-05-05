@@ -80,8 +80,6 @@ namespace CirnoBot.Http
                 return urls;
 
             } catch(Exception e) { Console.WriteLine(e.ToString()); return new Dictionary<int, string>(); }
-
-
         }
     }
 }

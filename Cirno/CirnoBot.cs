@@ -36,7 +36,5 @@ namespace CirnoBot
 
             await Task.Delay(-1);
         }
-
-        
     }
 }

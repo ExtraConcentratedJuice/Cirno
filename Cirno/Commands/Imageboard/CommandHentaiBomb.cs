@@ -8,19 +8,21 @@ using System.Linq;
 
 namespace CirnoBot.Commands.Imageboard
 {
-    public class CommandDanbooru : CirnoCommand
+    public class CommandHentaiBomb : CirnoCommand
     {
         #region Properties
 
-        public override string Name => "danbooru";
+        public override string Name => "hentaibomb";
 
-        public override string Description => "Grabs a random post from the Danbooru imageboard with the specified tags.";
+        public override string Description => "Please no";
 
-        public override string Syntax => "danbooru <tags>";
+        public override string Syntax => "hentaibomb <tags>";
 
-        public override List<string> Aliases => new List<string> { "dbooru" };
+        public override List<string> Aliases => new List<string>();
 
-        public override float Cooldown => 2.5F;
+        public override float Cooldown => 10F;
+
+        public override bool IsHidden { get => true; }
 
         #endregion
 
@@ -32,18 +34,17 @@ namespace CirnoBot.Commands.Imageboard
                 return;
             }
 
+            if (ctx.Channel is ITextChannel ch && !ch.IsNsfw)
+            {
+                await ctx.ReplyAsync("gtfo homo nsfw or nothing");
+                return;
+            }
+
+            args[0] = args[0] + " -rating:safe";
             List<string> tagList = args.Distinct().OrderBy(x => x).Select(x => x.Trim()).ToList();
             List<string> sortParams = args.Where(x => x.Contains(":")).Distinct().OrderBy(x => x).Select(x => x.Trim()).ToList();
             tagList.RemoveAll(x => x.Contains(":"));
             tagList.AddRange(sortParams);
-
-            if (ctx.Channel is ITextChannel ch && !ch.IsNsfw)
-            {
-                tagList.RemoveAll(x => String.Equals("rating:explicit", x, StringComparison.OrdinalIgnoreCase) ||
-                    String.Equals("rating:questionable", x, StringComparison.OrdinalIgnoreCase));
-
-                tagList.Add("rating:safe");
-            }
 
             string tags = String.Join(' ', tagList.ToArray());
 
@@ -75,19 +76,24 @@ namespace CirnoBot.Commands.Imageboard
                 return;
             }
 
-            KeyValuePair<int, string> url = urls.ElementAt(r.Next(urls.Count));
+            var urlList = urls.OrderBy(x => r.Next()).Take(r.Next(2, 5));
 
-            EmbedBuilder embed = new EmbedBuilder
+            foreach (var url in urlList)
             {
-                Title = $"tags: {tags}",
-                Url = $"https://danbooru.donmai.us/posts/{url.Key}",
-                ImageUrl = url.Value,
-                Color = Util.CyanColor
-            };
+                EmbedBuilder e = new EmbedBuilder
+                {
+                    Title = $"tags: {tags}",
+                    Url = $"https://danbooru.donmai.us/posts/{url.Key}",
+                    ImageUrl = url.Value,
+                    Color = Util.CyanColor
+                };
+                e.WithFooter("https://danbooru.donmai.us", "http://i.imgur.com/4Wjm9rb.png");
 
-            embed.WithFooter("https://danbooru.donmai.us", "http://i.imgur.com/4Wjm9rb.png");
+                try { await ctx.Author.SendMessageAsync("", embed: e.Build()); }
+                catch (Exception) { await ctx.ReplyAsync("Something went wrong. Do you have your DMs disabled?"); break; }
+            }
 
-            await ctx.ReplyAsync(embed.Build());
+            await ((IUserMessage)ctx.Message).AddReactionAsync(new Emoji("👌"));
         }
     }
 }

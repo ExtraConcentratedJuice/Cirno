@@ -6,9 +6,14 @@
     <StartupObject>CirnoBot.Program</StartupObject>
     <RootNamespace>CirnoBot</RootNamespace>
     <AssemblyName>Cirno</AssemblyName>
+    <Configurations>Debug;Release;Debug2</Configurations>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <Optimize>false</Optimize>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug2|AnyCPU'">
     <Optimize>false</Optimize>
   </PropertyGroup>
 

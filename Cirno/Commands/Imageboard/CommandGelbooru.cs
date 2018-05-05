@@ -20,7 +20,7 @@ namespace CirnoBot.Commands.Imageboard
 
         public override List<string> Aliases => new List<string>();
 
-        public override int Cooldown => 0;
+        public override float Cooldown => 2.5F;
 
         #endregion
 
@@ -28,7 +28,7 @@ namespace CirnoBot.Commands.Imageboard
         {
             if (args.Length < 1)
             {
-                await ctx.ReplyAsync("Invalid parameters.\nUsage: " + ctx.Bot.Configuration.Prefix + Syntax);
+                await ctx.ReplyAsync(Util.GenerateInvalidUsage(ctx.Bot, this));
                 return;
             }
 

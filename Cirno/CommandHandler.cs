@@ -31,6 +31,7 @@ namespace CirnoBot
         public async Task OnMessage(SocketMessage message)
         {
             string content = message.Content;
+            SocketUser user = message.Author;
 
             if (!content.StartsWith(bot.Configuration.Prefix))
                 return;
@@ -45,15 +46,25 @@ namespace CirnoBot
                 x.Aliases.Any(z => String.Equals(z, cmd.Substring(bot.Configuration.Prefix.Length))));
 
             if (command != null)
-                try
+            {
+                if (command.CooldownTable.ContainsKey(user.Id) && (DateTime.Now - command.CooldownTable[user.Id]).TotalSeconds < command.Cooldown)
                 {
-                    command.Invoke(new CommandContext(message, bot, new CirnoContext(bot.Configuration.ConnectionString)), args.ToArray());
+                    await message.Channel.SendMessageAsync($"You are on cooldown for this command. Seconds remaining: {(int)(command.Cooldown - (DateTime.Now - command.CooldownTable[user.Id]).TotalSeconds)}");
+                    return;
                 }
+
+                try { command.Invoke(new CommandContext(message, bot, new CirnoContext(bot.Configuration.ConnectionString)), args.ToArray()); }
                 catch (Exception e)
                 {
                     Console.WriteLine(e.ToString());
-                    await message.Channel.SendMessageAsync($"An exception occurred while attempting to execute this command. Report this issue with the {bot.Configuration.Prefix}issue command."); 
+                    await message.Channel.SendMessageAsync($"An exception occurred while attempting to execute this command. Report this issue with the {bot.Configuration.Prefix}issue command.");
                 }
+                finally
+                {
+                    if (command.Cooldown > 0)
+                        command.CooldownTable[user.Id] = DateTime.Now;
+                }
+            }
         }
     }
 }
