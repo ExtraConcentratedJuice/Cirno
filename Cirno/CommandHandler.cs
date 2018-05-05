@@ -59,7 +59,7 @@ namespace CirnoBot
                 Task task = Task.Run(async () =>
                     await command.InvokeInternalAsync(new CommandContext(message, bot, new CirnoContext(bot.Configuration.ConnectionString)), args.ToArray()));
 
-                await task.ContinueWith(async t => await HandleExceptionAsync(t.Exception.Flatten().InnerException as CommandException), TaskContinuationOptions.OnlyOnFaulted);
+                task.ContinueWith(async t => await HandleExceptionAsync(t.Exception.Flatten().InnerException as CommandException), TaskContinuationOptions.OnlyOnFaulted);
             }
         }
     }

@@ -47,7 +47,7 @@ namespace CirnoBot.Commands.Imageboard
                 tagList.Add("rating:safe");
             }
 
-            string tags = String.Join(' ', tagList.ToArray());
+            string tags = String.Join(' ', tagList.ToArray()).ToLower();
 
             if (tagList.Count > 2)
             {

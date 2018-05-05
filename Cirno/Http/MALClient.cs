@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Security.Authentication;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web;
@@ -13,11 +14,19 @@ namespace CirnoBot.Http
 {
     public class MALClient
     {
-        private HttpClient client = new HttpClient();
+        private HttpClient client;
         private const string BASE_URL = "https://myanimelist.net/api";
 
         public MALClient(string username, string password)
         {
+            var handler = new HttpClientHandler
+            {
+                SslProtocols = SslProtocols.Tls12 | SslProtocols.Tls11 | SslProtocols.Tls,
+                ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true
+            };
+
+            client = new HttpClient(handler);
+
             client.DefaultRequestHeaders.Authorization = 
                 new AuthenticationHeaderValue("Authorization", "Basic " + Convert.ToBase64String(Encoding.UTF8.GetBytes(username + ":" + password)));
         }
