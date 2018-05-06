@@ -12,21 +12,12 @@ using System.Xml.Linq;
 
 namespace CirnoBot.Http
 {
-    public class MALClient
+    public class MalClient : ApiClient
     {
-        private HttpClient client;
-        private const string BASE_URL = "https://myanimelist.net/api";
+        protected override string BaseUrl => "https://myanimelist.net/api";
 
-        public MALClient(string username, string password)
+        public MalClient(string username, string password)
         {
-            var handler = new HttpClientHandler
-            {
-                SslProtocols = SslProtocols.Tls12 | SslProtocols.Tls11 | SslProtocols.Tls,
-                ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true
-            };
-
-            client = new HttpClient(handler);
-
             client.DefaultRequestHeaders.Authorization = 
                 new AuthenticationHeaderValue("Authorization", "Basic " + Convert.ToBase64String(Encoding.UTF8.GetBytes(username + ":" + password)));
         }
@@ -37,7 +28,7 @@ namespace CirnoBot.Http
 
             query["q"] = search;
 
-            string endp = $"{BASE_URL}/anime/search.xml?{query.ToString()}";
+            string endp = $"{BaseUrl}/anime/search.xml?{query.ToString()}";
 
             string resp = await client.GetStringAsync(endp);
 
@@ -59,7 +50,7 @@ namespace CirnoBot.Http
                     Episodes = int.Parse(e.Element("episodes").Value),
                     Score = float.Parse(e.Element("score").Value),
                     Type = e.Element("type").Value,
-                    Status = e.Element("type").Value,
+                    Status = e.Element("status").Value,
                     StartDate = e.Element("start_date").Value,
                     EndDate = e.Element("end_date").Value,
                     Synopsis = e.Element("synopsis").Value,

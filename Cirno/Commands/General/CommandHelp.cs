@@ -39,6 +39,9 @@ namespace CirnoBot.Commands.General
 
                 foreach (var c in commands)
                 {
+                    if (!c.Any(x => !x.IsHidden))
+                        continue;
+
                     string name = c.Key;
                     string field = String.Join(", ", c.Where(x => !x.IsHidden).Select(x => $"``{x.Name}``").ToArray()).Trim(' ').Trim(',');
                     embed.AddField(name, field);
@@ -50,7 +53,7 @@ namespace CirnoBot.Commands.General
             {
                 var group = commands.FirstOrDefault(x => String.Equals(x.Key, args[0], StringComparison.OrdinalIgnoreCase));
 
-                if (group == null)
+                if (group == null || !group.Any(x => !x.IsHidden))
                 {
                     await ctx.ReplyAsync($"No command group by that name was found. Existing groups:\n {String.Join(", ", commands.Select(x => x.Key)).Trim(' ').Trim(',')}");
                     return;

@@ -45,7 +45,7 @@ namespace CirnoBot.Commands.Anime
                 return;
             }
 
-            var client = new MALClient(ctx.Bot.Configuration.MALUsername, ctx.Bot.Configuration.MALPassword);
+            var client = new MalClient(ctx.Bot.Configuration.MALUsername, ctx.Bot.Configuration.MALPassword);
 
             MALAnimeEntry entry;
             try { entry = await client.FirstAnimeAsync(animeName); }

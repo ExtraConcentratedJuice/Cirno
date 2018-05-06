@@ -15,10 +15,9 @@ namespace CirnoBot.Http
     {
         public GelbooruClient(CirnoContext context) : base(context) { }
 
-        protected override string BaseUrl() =>
-            "https://gelbooru.com";
+        protected override string BaseUrl => "https://gelbooru.com";
 
-        public async Task<int> GetImageCountAsync(string tags)
+        public override async Task<int> GetImageCountAsync(string tags)
         {
             var cache = context.GelbooruCountCache.FirstOrDefault(x => x.Tags == tags);
 
@@ -33,7 +32,7 @@ namespace CirnoBot.Http
             query["q"] = "index";
             query["limit"] = "0";
 
-            string endp = $"{BaseUrl()}/index.php?{query.ToString()}";
+            string endp = $"{BaseUrl}/index.php?{query.ToString()}";
 
             XElement root = XElement.Parse(await client.GetStringAsync(endp));
 
@@ -67,7 +66,7 @@ namespace CirnoBot.Http
             query["limit"] = limit.ToString();
             query["json"] = "1";
 
-            string endp = $"{BaseUrl()}/index.php?{query.ToString()}";
+            string endp = $"{BaseUrl}/index.php?{query.ToString()}";
 
             string data = await client.GetStringAsync(endp);
 

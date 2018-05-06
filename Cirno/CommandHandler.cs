@@ -1,8 +1,10 @@
 ﻿using CirnoBot.Entities;
+using CirnoBot.Exceptions;
 using Discord.WebSocket;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
@@ -32,6 +34,12 @@ namespace CirnoBot
         {
             if (e == null)
                 return;
+
+            if (e.Exception is Discord.Net.HttpException ex && ex.HttpCode == HttpStatusCode.Forbidden)
+            {
+                await e.Context.ReplyAsync("Error! I didn't have permissions to do something. It's probably embeds, can you give me permission to embed links in this channel?");
+                return;
+            }
 
             Console.WriteLine(e.Exception.ToString());
             await e.Context.ReplyAsync($"An exception occurred while attempting to execute this command. Report this issue with ``{bot.Configuration.Prefix}issue <issue>``.");

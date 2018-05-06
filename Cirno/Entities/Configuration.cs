@@ -8,6 +8,7 @@ namespace CirnoBot.Entities
     {
         public string Token { get; set; }
         public string Prefix { get; set; }
+        public List<ulong> OwnerIds { get; set; }
         public string MALUsername { get; set; }
         public string MALPassword { get; set; }
         public string ConnectionString { get; set; }

@@ -14,10 +14,9 @@ namespace CirnoBot.Http
     {
         public DanbooruClient(CirnoContext context) : base(context) { }
         
-        protected override string BaseUrl() => 
-            "https://danbooru.donmai.us";
+        protected override string BaseUrl => "https://danbooru.donmai.us";
 
-        public async Task<int> GetImageCountAsync(string tags)
+        public override async Task<int> GetImageCountAsync(string tags)
         {
             var cache = context.DanbooruCountCache.FirstOrDefault(x => x.Tags == tags);
 
@@ -28,7 +27,7 @@ namespace CirnoBot.Http
 
             query["tags"] = tags;
 
-            string endp = $"{BaseUrl()}/counts/posts.json?{query.ToString()}";
+            string endp = $"{BaseUrl}/counts/posts.json?{query.ToString()}";
 
             string data = await client.GetStringAsync(endp);
 
@@ -61,7 +60,7 @@ namespace CirnoBot.Http
                 query["page"] = page.ToString();
                 query["tags"] = tags;
 
-                string endp = $"{BaseUrl()}/posts.json?{query.ToString()}";
+                string endp = $"{BaseUrl}/posts.json?{query.ToString()}";
 
                 string data = await client.GetStringAsync(endp);
 
