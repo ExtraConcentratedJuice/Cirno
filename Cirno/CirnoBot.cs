@@ -14,10 +14,12 @@ namespace CirnoBot
         public Configuration Configuration { get; private set; }
         public DiscordSocketClient Client { get; private set; }
         public CommandHandler Commands { get; private set; }
+        public static PersistentData Data { get; private set; }
 
         public async Task MainAsync()
         {
             Configuration = JsonConvert.DeserializeObject<Configuration>(File.ReadAllText("config.json"));
+            Data = JsonConvert.DeserializeObject<PersistentData>(File.ReadAllText("data.json"));
 
             Client = new DiscordSocketClient(new DiscordSocketConfig
             {

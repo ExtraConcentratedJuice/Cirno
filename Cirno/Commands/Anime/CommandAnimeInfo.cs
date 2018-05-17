@@ -62,7 +62,7 @@ namespace CirnoBot.Commands.Anime
                 return;
             }
 
-            string desc = HttpUtility.HtmlDecode(Regex.Replace(entry.Synopsis, @"<(?:[^>=]|='[^']*'|=""[^""]*""|=[^'""][^\s>]*)*>", ""));
+            string desc = Util.BBCodeToMarkdown(HttpUtility.HtmlDecode(Regex.Replace(entry.Synopsis, @"<(?:[^>=]|='[^']*'|=""[^""]*""|=[^'""][^\s>]*)*>", "")));
 
             EmbedBuilder embed = new EmbedBuilder
             {

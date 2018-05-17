@@ -22,5 +22,6 @@ namespace CirnoBot.Entities
         public DbSet<Blacklisted> Blacklisted { get; set; }
         public DbSet<GelbooruCountCache> GelbooruCountCache { get; set; }
         public DbSet<DanbooruCountCache> DanbooruCountCache { get; set; }
+        public DbSet<TwistEntry> TwistEntries { get; set; }
     }
 }

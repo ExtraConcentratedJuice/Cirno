@@ -47,6 +47,9 @@ namespace CirnoBot
 
         public async Task OnMessageAsync(SocketMessage message)
         {
+            if (message.Author.IsBot)
+                return;
+
             string content = message.Content;
             SocketUser user = message.Author;
 
@@ -65,9 +68,8 @@ namespace CirnoBot
             if (command != null)
             {
                 Task task = Task.Run(async () =>
-                    await command.InvokeInternalAsync(new CommandContext(message, bot, new CirnoContext(bot.Configuration.ConnectionString)), args.ToArray()));
-
-                task.ContinueWith(async t => await HandleExceptionAsync(t.Exception.Flatten().InnerException as CommandException), TaskContinuationOptions.OnlyOnFaulted);
+                    await command.InvokeInternalAsync(new CommandContext(message, bot, new CirnoContext(bot.Configuration.ConnectionString)), args.ToArray())
+                    .ContinueWith(async t => await HandleExceptionAsync(t.Exception.Flatten().InnerException as CommandException), TaskContinuationOptions.OnlyOnFaulted));
             }
         }
     }

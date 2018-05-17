@@ -21,5 +21,8 @@ namespace CirnoBot
 
         public static SocketTextChannel ParseTextChannel(string channel, DiscordSocketClient client) =>
             ulong.TryParse(new String(channel.Where(x => Char.IsDigit(x)).ToArray()), out ulong cId) ? client.GetChannel(cId) as SocketTextChannel : null;
+
+        public static String BBCodeToMarkdown(string str) =>
+            str.Replace("[i]", "*").Replace("[/i]", "*").Replace("[b]", "**").Replace("[/b]", "**");
     }
 }
